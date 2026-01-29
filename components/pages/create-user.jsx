@@ -4,17 +4,16 @@ import DropDown from '../ui/dropdown'
 import DateInput from '../ui/date-input'
 import PhoneInput from '../ui/phone-input'
 import PasswordInput from '../ui/password-input'
-import { Link, Route, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function CreateUser() {
   const FrontendSkills = ["HTML", "CSS", "JavaScript", "React", "Angulur"]
   const BackendSkills = ["PHP", "Laravel", "Python", "Node.js"]
-  const GenderOptions =["Male", "Female", "Other"]
+  const GenderOptions =["Male", "Female"]
   const DepartmentOptions =["Web Development", "Devops", "Android Development", "Block Chain"]
   const navigate = useNavigate()
 
   const [error, seterror] = useState({})
-  const [currentDate, setCurrentDate] = useState("")
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -32,8 +31,6 @@ export default function CreateUser() {
     emergencycontact2: "",
     emergencycontact3: "",
     skills: [],
-    // frontendskills: [],
-    // backendskills: [],
     aboutme: "",
   })
 
@@ -46,8 +43,7 @@ export default function CreateUser() {
   const {name, value, checked} = e.target
   setFormData(prev => ({ ...prev, skills: checked ? [...prev.skills, value] : prev.skills.filter((skills) => skills !== val)
   }))
-}
-
+  }
 
   const saveDataToLocalStorage = (data) => {
     const existingData = JSON.parse(localStorage.getItem("Data")) || []
@@ -58,75 +54,86 @@ export default function CreateUser() {
   }
 
   const validate = (data) => {
-    const newError = {}
+
+    const currentDate = new Date().valueOf()
+    const dob = new Date(data.dob).valueOf() 
+    const joiningdate = new Date(data.joiningdate).valueOf() 
 
     if(!data.firstname.trim()) {
-      newError.firstname = "name is required"
+      return {firstname: "name is required"}
+    }
+
+    else if(data.firstname.length < 3) {
+      return {firstname: "Name hould contain more then 3 characters"}
     }
 
     if(!data.email.trim()) {
-      newError.email = "email is required"
-    }
-    else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email))) {
-      newError.email = "email must be in some@gmail.com format"
+      return {email: "email is required"}
     }
 
-    if(!data.mobileno1.trim()) {
-      newError.mobileno1 = "Phone no. is required"
+    else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+      return {email: "email must be in some@gmail.com format"}
     }
 
-    if(!data.gender.trim()) {
-      newError.gender = "gender is required"
-    }
-
-    else if( data.mobileno1.length < 10) {
-      newError.mobileno1 = "number must contain 10 characters"
+    if(!data.gender) {
+      return {gender: "gender is required"}
     }
 
     if(!data.dob.trim()) {
-      newError.dob = "Select a Date of Birth"
+      return {dob: "Select a Date of Birth"}
+    }
+
+    else if(dob > currentDate) {
+      return {dob: "Select a correct date"}
     }
 
     if(!data.department) {
-      newError.department = "Please Select a Department"
+      return {department: "Please Select a Department"}
     }
 
     if(!data.joiningdate) {
-      newError.joiningdate = "Select a joining Date"
+      return {joiningdate: "Select a joining Date"}
+    }
+
+    else if(joiningdate < currentDate) {
+      return {joiningdate: "Select correct date"}
+    }
+
+    if(!data.mobileno1.trim()) {
+      return {mobileno1: "Phone no. is required"}
+    }
+
+    else if( data.mobileno1.length < 10) {
+      return {mobileno1: "number must contain 10 characters"}
     }
 
     if(!data.password.trim()) {
-      newError.password = "Password is Required"
+      return {password: "Password is Required"}
     }
 
     else if(data.password.length < 8) {
-      newError.password = "Password should contain atlease 8 letters"
+      return {password: "Password should contain atlease 8 letters"}
     }
 
     if(!data.address1.trim()) {
-      newError.address1 = "Address is Required"
+      return {address1: "Address is Required"}
     }
 
     if(data.skills.length < 1 ) {
-      newError.skills = "please Select at lease one skill"
+      return {skills: "please Select at lease one skill"}
     }
 
-    return newError
+    return {}
   }
-
-  // const date = new Date().toLocaleDateString("en-GB")
-  // setCurrentDate(date)
-  // console.log(date)
 
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const formError =  validate(formData)
-    seterror(formError)
-    console.log(formError)
-
+    
     if(Object.keys(formError).length > 0){
+      seterror(formError)
       return
     }
     
@@ -149,8 +156,6 @@ export default function CreateUser() {
       emergencycontact2: "",
       emergencycontact3: "",
       skills: [],
-      // frontendskills: [],
-      // backendskills: [],
       aboutme: "",
     })
     
@@ -287,8 +292,3 @@ export default function CreateUser() {
 
 
 
-// should not check validation if one is wrong
-// email validation
-// dob validation
-// joining date validation
-//
