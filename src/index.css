@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+
+  .input {
+    @apply w-full border mt-2 py-1 rounded-sm border-zinc-400 px-3
+  }
+
+  .heading{
+    @apply text-zinc-500 text-lg font-semibold 
+  }
+
+  .heading2{
+    @apply text-zinc-600 font-semibold 
+  }
+
+  .button {
+    @apply rounded-sm border border-zinc-600 px-6 py-1.5
+  }
