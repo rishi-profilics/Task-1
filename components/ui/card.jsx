@@ -1,8 +1,9 @@
 import React from 'react'
 import { FaFacebookF, FaLinkedinIn, FaSlackHash } from 'react-icons/fa'
+import { Link } from 'react-router-dom'
 
 export default function Card({item}) {
-    const { firstname, lastname, email } = item
+    const { firstname, lastname, email, _id } = item
   return (
       <div className="bg-zinc-100 p-4 rounded-xl flex flex-col items-center gap-5">
         <div className="h-32 w-32 rounded-full overflow-hidden object-cover">
@@ -21,7 +22,9 @@ export default function Card({item}) {
         </div>
 
         <div className="flex flex-col items-center gap-y-2">
-            <button className='button'>View Profile</button>
+            <Link to={`/update/${_id}`}>
+                <button className='button'>View Profile</button>
+            </Link>
             <button className='button'>Message</button>
         </div>
 

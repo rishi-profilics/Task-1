@@ -2,6 +2,7 @@ import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import CreateUser from '../components/pages/create-user'
 import ShowUsers from '../components/pages/show-users'
+import UpdateUser from '../components/pages/update-user'
 
 export default function App() {
   return (
@@ -9,6 +10,7 @@ export default function App() {
       <Routes>
         <Route path='/' element={<CreateUser/>}  />
         <Route path='/users' element={<ShowUsers/>}  />
+        <Route path='/update/:id' element={<UpdateUser/>}  />
       </Routes>
     </div>
   )
