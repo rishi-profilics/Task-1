@@ -54,7 +54,7 @@ export default function ShowUsers() {
             </Link>
           </div>
         ) : (
-          <div className="grid h-full grid-cols-4 gap-6">
+          <div className="grid h-full grid-cols-3 gap-6">
             {users.map((item, index) => (
               <Card key={index} item={item} />
             ))}

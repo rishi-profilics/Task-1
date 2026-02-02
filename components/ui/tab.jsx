@@ -10,9 +10,9 @@ export default function Tab() {
             <h3 className={` ${pathname == "/users" ? "text-black font-semibold" : "text-zinc-600"} `}>View Profile</h3>
             {pathname == "/users" && <div className="absolute w-full left-0.5 top-12 bg-black h-0.5"/>} 
         </Link>
-        <Link className='w-fit relative' to="/create">
-            <h3 className={`${pathname == "/create" ? "text-black font-semibold"  : "text-zinc-600"}`}>Create profile</h3>
-            {pathname == "/create" && <div className="absolute w-full left-0.5 top-12 bg-black h-0.5"/>}
+        <Link className='w-fit relative' to="/">
+            <h3 className={`${pathname == "/" ? "text-black font-semibold"  : "text-zinc-600"}`}>Create profile</h3>
+            {pathname == "/" && <div className="absolute w-full left-0.5 top-12 bg-black h-0.5"/>}
         </Link>
     </div>
   )
