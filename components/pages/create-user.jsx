@@ -6,6 +6,8 @@ import PhoneInput from "../ui/phone-input";
 import PasswordInput from "../ui/password-input";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Header from "../ui/header";
+import Tab from "../ui/tab";
 
 export default function CreateUser() {
   const FrontendSkills = ["HTML", "CSS", "JavaScript", "React", "Angulur"];
@@ -36,7 +38,10 @@ export default function CreateUser() {
     emergencycontact1: "",
     emergencycontact2: "",
     emergencycontact3: "",
-    skills: [],
+    skills: {
+      frontend: [],
+      backend: [],
+    },
     aboutme: "",
   });
 
@@ -45,15 +50,31 @@ export default function CreateUser() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSkillChange = (e) => {
-    const { name, value, checked } = e.target;
-    setFormData((prev) => ({
+const handleSkillChange = (e, type) => {
+  const { value, checked } = e.target;
+
+  setFormData((prev) => {
+    const currentSkills = prev.skills || {
+      frontend: [],
+      backend: [],
+    };
+
+    const updatedSkills = checked
+      ? [...currentSkills[type], value]
+      : currentSkills[type].filter(
+          (skill) => skill !== value
+        );
+
+    return {
       ...prev,
-      skills: checked
-        ? [...prev.skills, value]
-        : prev.skills.filter((skills) => skills !== val),
-    }));
-  };
+      skills: {
+        ...currentSkills,
+        [type]: updatedSkills,
+      },
+    };
+  });
+};
+
 
   // const saveDataToLocalStorage = (data) => {
   //   const existingData = JSON.parse(localStorage.getItem("Data")) || []
@@ -165,15 +186,8 @@ export default function CreateUser() {
   };
 
   return (
-    <div className="bg-zinc-300 h-full space-y-12 w-full p-6">
-      <div className="w-full flex justify-end">
-        <Link to="/users">
-          <button className="px-3 py-1.5 text-white bg-slate-500 rounded-sm">
-            See Users
-          </button>
-        </Link>
-      </div>
-
+    <div>
+      <Tab/>
       <form
         onSubmit={handleSubmit}
         className="bg-zinc-100 p-4 w-full space-y-6 rounded-lg"
@@ -380,9 +394,9 @@ export default function CreateUser() {
                   <input
                     type="checkbox"
                     value={item}
-                    checked={formData.skills.includes(item)}
+                    checked={formData.skills.frontend.includes(item)}
                     name={item.toLowerCase()}
-                    onChange={handleSkillChange}
+                    onChange={(e) => handleSkillChange(e, "frontend")}
                   />{" "}
                   {item}
                 </div>
@@ -398,9 +412,9 @@ export default function CreateUser() {
                   <input
                     type="checkbox"
                     value={item}
-                    checked={formData.skills.includes(item)}
+                    checked={formData.skills.backend.includes(item)}
                     name={item.toLowerCase()}
-                    onChange={handleSkillChange}
+                    onChange={(e) => handleSkillChange(e, "backend")}
                   />{" "}
                   {item}
                 </div>
@@ -427,7 +441,7 @@ export default function CreateUser() {
           <input
             type="submit"
             value="Add Profile"
-            className="px-3 py-1.5 text-white bg-slate-400 rounded-sm"
+            className="px-3 py-1.5 cursor-pointer text-white bg-slate-400 rounded-sm"
           />
         </div>
       </form>

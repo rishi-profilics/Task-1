@@ -5,7 +5,7 @@ export default function TextInput({label, type, placeholder, isRequired, name, h
     <>
       <label className="font-semibold text-gray-700">{label}</label>
       <input
-      onChange={handleChange}
+        onChange={handleChange}
         value={value}
         type={type}
         name={name}
