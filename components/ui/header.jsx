@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
 import { BsThreeDots } from "react-icons/bs";
 
@@ -8,15 +8,18 @@ export default function Header() {
   const [dropdown, setDropdown] = useState(false);
   const [logo, setLogo] = useState("");
   const { pathname } = useLocation();
-  const [sidebar, setSidebar] = useState(false)
+  const [sidebar, setSidebar] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleDropdown = () => {
     setDropdown((prev) => !prev);
   };
 
   const routes = [
-    { name: "View Profiles", link: "/users" },
-    { name: "Create Profile", link: "/" },
+    { name: "Profiles", link: "/" },
+    { name: "Calender", link: "/" },
+    { name: "Timeline", link: "/" },
     // {name: "", link: '/users'},
   ];
 
@@ -26,47 +29,55 @@ export default function Header() {
 
   useEffect(() => {
     if (pathname === "/") {
-      setLogo("Create Profile");
+      setLogo("view Users");
     }
 
-    if (pathname.includes("/users")) {
-      setLogo("View Users");
-    }
+    // if (pathname.includes("/users")) {
+    //   setLogo("View Users");
+    // }
   }, [pathname]);
 
-
+  const handleSignout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   return (
-    <div className="w-full flex items-center justify-between">
-
+    <div className="w-full pt-6 px-6 flex items-center justify-between">
       <div className="flex items-center gap-4">
-        <h1 className="text-xl text-zinc-600 font-semibold">{logo || "Dashboard"}</h1>
+        <h1 className="text-xl text-zinc-600 font-semibold">
+          {logo || "Dashboard"}
+        </h1>
       </div>
 
       <div className="relative inline-block">
-        <button
-          onClick={handleDropdown}
-          className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-zinc-400 px-3 py-2 text-sm font-semibold text-white hover:bg-zinc-400/70"
-        >
+        <button onClick={handleDropdown} className="p-3">
           <FaUser />
         </button>
 
         <div
-          className={`${dropdown ? "absolute" : "hidden"}  right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-zinc-100 `}
+          className={`${dropdown ? "absolute" : "hidden"}  right-0 z-10 mt-2 w-56 origin-top-right overflow-hidden rounded-md bg-zinc-100 `}
         >
-          {routes.map((item, index) => (
-            <div key={index} className="py-1">
-              <div>
+          <div>
+            {routes.map((item, index) => (
+              <div key={index}>
                 <Link
                   onClick={handleCloseDropdown}
                   to={item.link}
-                  className="block px-4 py-2 text-sm text-gray-600 data-focus:bg-white/5 data-focus:text-white data-focus:outline-hidden"
+                  className="block px-4 py-2 text-sm text-gray-600  "
                 >
                   {item.name}
                 </Link>
               </div>
-            </div>
-          ))}
+            ))}
+            <div className=" h-px  bg-zinc-400" />
+            <button
+              onClick={handleSignout}
+              className="block w-full text-start px-4 py-2 cursor-pointer text-sm text-gray-600 hover:bg-red-50 "
+            >
+              Sign Out
+            </button>
+          </div>
         </div>
       </div>
     </div>

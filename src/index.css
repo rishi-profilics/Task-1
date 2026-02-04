@@ -2,7 +2,7 @@
 
 
   .input {
-    @apply w-full border mt-2 py-1 rounded-sm border-zinc-400 px-3
+    @apply w-full border mt-2 py-1 rounded-sm h-fit border-zinc-400 px-3
   }
 
   .heading{

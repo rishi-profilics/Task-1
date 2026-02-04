@@ -1,9 +1,10 @@
-import React from 'react'
+import React from "react";
+import Layout from "../ui/layout";
 
 export default function Notifications() {
   return (
-    <div>
-      
-    </div>
-  )
+    <Layout>
+      <div className="p-6"></div>
+    </Layout>
+  );
 }

@@ -16,32 +16,37 @@ import Notifications from "../components/pages/notifiactions";
 import Referral from "../components/pages/referral";
 import Ticket from "../components/pages/ticket";
 import HRMS from "../components/pages/hrms";
+import ProtectedRoute from "./protected-route";
+import NotFound from "../components/pages/not-found";
+import Login from "../components/pages/login";
+import Register from "../components/pages/register";
 
 export default function App() {
-  const location = useLocation();
 
   return (
-    <div className="flex">
-      <Sidebar />
-      <div className="bg-zinc-300 min-h-screen space-y-12 w-full p-6">
-        <Header />
+
         <Routes>
-          <Route path="/" element={<CreateUser />} />
-          <Route path="/users" element={<ShowUsers />} />
-          <Route path="/update/:id" element={<UpdateUser />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/activities" element={<Activities />} />
-          <Route path="/holidays" element={<Holidays />} />
-          <Route path="/events" element={<Events />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/todo-list" element={<Todo />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/referrals" element={<Referral />} />
-          <Route path="/tickets" element={<Ticket />} />
-          <Route path="/hrms" element={<HRMS />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          <Route element={<ProtectedRoute />}>
+            {/* <Route path="/" element={<CreateUser />} /> */}
+            <Route path="/" element={<ShowUsers />} />
+            <Route path="/update/:id" element={<UpdateUser />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/activities" element={<Activities />} />
+            <Route path="/holidays" element={<Holidays />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/todo-list" element={<Todo />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/referrals" element={<Referral />} />
+            <Route path="/tickets" element={<Ticket />} />
+            <Route path="/hrms" element={<HRMS />} />
+          </Route>
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
-      </div>
-    </div>
   );
 }

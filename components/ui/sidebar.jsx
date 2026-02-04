@@ -24,7 +24,7 @@ export default function Sidebar() {
 
   return (
     <div
-      className={`z-10 top-0 left-0 w-80 h-screen p-6 bg-zinc-100 shadow-xl`}
+      className={`z-10 top-0 left-0 w-80 sticky h-screen p-6 bg-zinc-100 shadow-xl`}
     >
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-semibold text-lg text-zinc-600 ">

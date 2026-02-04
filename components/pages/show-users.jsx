@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Header from "../ui/header";
 import Tab from "../ui/tab";
+import Layout from "../ui/layout";
 
 export default function ShowUsers() {
   const [users, setUsers] = useState([]);
@@ -32,23 +33,25 @@ export default function ShowUsers() {
 
   if (loading) {
     return (
+      <Layout>
       <div >
         <Tab/>
         <p className="text-xl text-zinc-500 mt-6 ml-5 font-semibold">Loading...</p>
       </div>
-      
+      </Layout>
     )
   }
 
   return (
+    <Layout>
     <div>
-      <div className="space-y-10  h-full">
+      <div className="space-y-10 p-6  h-full">
         <Tab />
         {users.length == 0 ? (
           <div className=" h-screen bg-zinc-300 w-full flex items-center flex-col gap-6 justify-center ">
             <h1 className="text-3xl font-mono text-zinc-600">No user Found</h1>
             <Link to="/">
-              <button className="px-3 py-1.5 text-white bg-slate-500 rounded-sm">
+              <button className="px-3 cursor-pointer py-1.5 text-white bg-slate-500 rounded-sm">
                 Create Users
               </button>
             </Link>
@@ -62,5 +65,7 @@ export default function ShowUsers() {
         )}
       </div>
     </div>
+    </Layout>
+
   );
 }
