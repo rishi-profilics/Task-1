@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import TextInput from "../ui/text-input";
-import DropDown from "../ui/dropdown";
-import DateInput from "../ui/date-input";
-import PhoneInput from "../ui/phone-input";
-import PasswordInput from "../ui/password-input";
+import TextInput from "../../ui/text-input";
+import DropDown from "../../ui/dropdown";
+import DateInput from "../../ui/date-input";
+import PhoneInput from "../../ui/phone-input";
+import PasswordInput from "../../ui/password-input";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import Header from "../ui/header";
-import Layout from "../ui/layout";
+import Header from "../../ui/header";
+import Layout from "../../ui/layout";
 
 export default function UpdateUser() {
   const FrontendSkills = ["HTML", "CSS", "JavaScript", "React", "Angulur"];
@@ -426,7 +426,6 @@ export default function UpdateUser() {
             </div>
           </div>
 
-          {/* Skills Section */}
           <h1 className="heading">Skills</h1>
           <div className="space-y-5">
             <div>
@@ -466,6 +465,7 @@ export default function UpdateUser() {
             </div>
             {error.skills && <p className="text-red-500">{error.skills}</p>}
           </div>
+          {/* Skills Section */}
 
           {/* About Me Section */}
 

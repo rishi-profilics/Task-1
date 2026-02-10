@@ -2,7 +2,7 @@
 
 
   .input {
-    @apply w-full border mt-2 py-1 rounded-sm h-fit border-zinc-400 px-3
+    @apply w-full border mt-2 py-1.5 rounded-sm h-fit border-zinc-400 px-3
   }
 
   .heading{
@@ -15,4 +15,8 @@
 
   .button {
     @apply rounded-sm border border-zinc-600 px-6 py-1.5
+  }
+
+  .button2 {
+    @apply px-5 py-1.5 border border-[#5f4d76] cursor-pointer text-white bg-[#5f4d76] rounded-sm
   }

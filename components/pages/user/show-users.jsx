@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Card from "../ui/card";
+import Card from "../../ui/card";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import Header from "../ui/header";
-import Tab from "../ui/tab";
-import Layout from "../ui/layout";
+import Header from "../../ui/header";
+import Tab from "../../ui/tab";
+import Layout from "../../ui/layout";
 
 export default function ShowUsers() {
   const [users, setUsers] = useState([]);

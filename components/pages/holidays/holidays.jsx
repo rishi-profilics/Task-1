@@ -1,7 +1,7 @@
 import React from 'react'
-import Layout from '../ui/layout'
+import Layout from '../../ui/layout'
 
-export default function Todo() {
+export default function Holidays() {
   return (
     <Layout>
       <div className="p-6"></div>

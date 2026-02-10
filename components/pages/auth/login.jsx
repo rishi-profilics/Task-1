@@ -1,10 +1,10 @@
-import axios from "../../utils/axios";
+import axios from "../../../utils/axios";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PiFinnTheHumanFill } from "react-icons/pi";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function Register() {
+export default function Login() {
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -21,8 +21,12 @@ export default function Register() {
     setLoading(true);
 
     try {
-      await axios.post("/register", data);
-      navigate("/login")
+      const res = await axios.post("/login", data);
+      if (res) {
+        localStorage.removeItem("token")
+        localStorage.setItem("token", res.data.token);
+        navigate("/");
+      }
     } catch (error) {
       if (error.response?.status === 400) {
         setServerError(error.response.data.message);
@@ -38,41 +42,12 @@ export default function Register() {
     <div className="flex items-center h-screen  relative">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className=" bg-zinc-100 space-y-2 rounded-lg  ml-44 w-96 z-10 p-8"
+        className=" bg-zinc-100 space-y-2 rounded-lg  ml-52 w-80 z-10 p-8"
       >
         <div className="flex items-center justify-center mb-8 text-purple-950">
           <PiFinnTheHumanFill size={36} />
         </div>
-        <h2 className="mb-4">REGISTER YOUR ACCOUNT</h2>
-
-        <div className="flex gap-3">
-          <div>
-            <input
-              {...register("firstName", {
-                required: "Name is required",
-                minLength: {
-                  value: 3,
-                  message: "Should contain atleast 3 characters",
-                },
-              })}
-              type="text"
-              className="input"
-              placeholder="First Name"
-            />
-            {errors.firstName && (
-              <p className="text-red-600 text-xs">{errors.firstName.message}</p>
-            )}
-          </div>
-
-          <div>
-            <input
-              {...register("lastName")}
-              type="text"
-              className="input"
-              placeholder="Last Name"
-            />
-          </div>
-        </div>
+        <h2 className="mb-4">LOGIN TO YOUR ACCOUNT</h2>
 
         <input
           {...register("email", {
@@ -111,16 +86,16 @@ export default function Register() {
           disabled={loading}
           type="submit"
         >
-          {loading ? "Loading..." : "Login"}
+          {loading ? "Loading..." : "Login" }
         </button>
 
         {serverError && <p className="text-red-600 text-xs">{serverError}</p>}
 
         <div className="flex justify-center items-center gap-1">
-          Alredy have an account?{" "}
-          <Link to="/login" className="text-sky-700">
+          Don't have an account?{" "}
+          <Link to="/register" className="text-sky-700">
             {" "}
-            Login
+            Register
           </Link>{" "}
         </div>
       </form>
