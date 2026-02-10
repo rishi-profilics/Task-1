@@ -5,6 +5,10 @@ const ActivityContext = createContext(null);
 
 export const ActivityProvider = ({ children }) => {
   const [punchData, setPunchData] = useState(null);
+  const [filterDateData, setfilterDateData] = useState({
+    fromDate:'',
+    toDate:''
+  })
 
   const checkPunch = async (data) => {
     try {
@@ -16,6 +20,7 @@ export const ActivityProvider = ({ children }) => {
       });
       const userData = res.data.data;
       setPunchData(userData);
+      setfilterDateData({fromDate: data.fromDate, toDate: data.toDate})
 
       // console.log();
     } catch (error) {
@@ -29,6 +34,7 @@ export const ActivityProvider = ({ children }) => {
         punchData,
         setPunchData,
         checkPunch,
+        filterDateData,
       }}
     >
       {children}

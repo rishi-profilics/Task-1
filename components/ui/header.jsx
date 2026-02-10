@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { HiOutlineMenuAlt3 } from "react-icons/hi";
-import { BsThreeDots } from "react-icons/bs";
+
 import axios from "../../utils/axios";
 import { toast } from "react-toastify";
 import ActivityContext from "../../src/context/activity-context";
@@ -12,7 +11,7 @@ export default function Header() {
   const [dropdown, setDropdown] = useState(false);
   const [logo, setLogo] = useState("");
   const { pathname } = useLocation();
-  const { punchData, checkPunch } = useContext(ActivityContext);
+  const { filterDateData ,punchData, checkPunch } = useContext(ActivityContext);
    const {seconds, hours, minutes, start, pause, reset} = useStopwatch({autoStart:false})
   const navigate = useNavigate();
   const handleDropdown = () => {
@@ -36,7 +35,7 @@ export default function Header() {
         desciption: "",
         action: "punch",
       });
-      checkPunch();
+      checkPunch(filterDateData);
       
       console.log(res.data.data.activity_type)
       
@@ -55,9 +54,9 @@ export default function Header() {
     }
   };
 
-  useEffect(() => {
-    checkPunch();
-  }, []);
+  // useEffect(() => {
+  //   checkPunch();
+  // }, []);
 
   const latestActivity = punchData?.[0] || null;
 

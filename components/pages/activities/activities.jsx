@@ -9,25 +9,23 @@ import ActivityContext from "../../../src/context/activity-context";
 export default function Activities() {
   const {
     register: breakRegister,
-    handleSubmit : breakHandleSubmit,
-    reset : breakReset,
+    handleSubmit: breakHandleSubmit,
+    reset: breakReset,
     formState: { errors: breakError },
   } = useForm();
 
   const {
     register: dateRegister,
-    handleSubmit : dateHandleSubmit,
-    reset : dateReset,
-    setValue:  dateValue,
+    handleSubmit: dateHandleSubmit,
+    reset: dateReset,
+    setValue: dateValue,
     formState: { errors: dateError },
   } = useForm();
-
 
   const [userData, setUserData] = useState([]);
   const [isDialogueOpen, setIsDialogueOpen] = useState(false);
 
-  const { punchData, checkPunch } = useContext(ActivityContext);
-
+  const { filterDateData, punchData, checkPunch } = useContext(ActivityContext);
 
   const fetchProfile = async () => {
     const user = await axios.get("/profile");
@@ -44,7 +42,7 @@ export default function Activities() {
           description: data.description,
           action: "break",
         });
-        checkPunch();
+        checkPunch(filterDateData);
         toast.success(res.data.message);
       } catch (error) {
         toast.error(error.response.data.message);
@@ -61,7 +59,7 @@ export default function Activities() {
         desciption: "",
         action: "break",
       });
-      checkPunch();
+      checkPunch(filterDateData);
       toast.success(res.data.message);
     } catch (error) {
       toast.error(error.response.data.message);
@@ -73,9 +71,9 @@ export default function Activities() {
   );
 
   const handleDate = (data) => {
-    checkPunch(data)
+    checkPunch(data);
     // dateReset()
-  }
+  };
 
   const formatTime = (isoString) => {
     if (!isoString) return "";
@@ -125,15 +123,17 @@ export default function Activities() {
 
               <div className="flex-1 flex flex-col gap-2 p-4 w-full">
                 <textarea
-                  {...breakRegister("description",{
-                    required: "Please add your break reason"
+                  {...breakRegister("description", {
+                    required: "Please add your break reason",
                   })}
                   className="flex-1 w-full ring rounded-sm ring-zinc-300 px-2 py-1"
                   placeholder="Please provide a reason for break"
                 ></textarea>
                 {breakError.description && (
-                <p className="text-red-600 text-xs">{breakError.description.message}</p>
-              )}
+                  <p className="text-red-600 text-xs">
+                    {breakError.description.message}
+                  </p>
+                )}
               </div>
 
               <div className="border-t-2 w-full border-zinc-100 flex items-center p-4 justify-end">
@@ -152,27 +152,26 @@ export default function Activities() {
     );
   }
 
-  const today = new Date().toISOString().split("T")[0] 
+  const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
-    checkPunch({fromDate: today, toDate: today});
-      dateValue("fromDate", today)
-  dateValue("toDate", today)
+    checkPunch({ fromDate: today, toDate: today });
+    dateValue("fromDate", today);
+    dateValue("toDate", today);
   }, []);
 
   useEffect(() => {
     fetchProfile();
-    
   }, []);
-
-
-
 
   return (
     <Layout>
       <div className="p-6 space-y-6">
         <div className="bg-zinc-100 p-4 w-full flex items-end justify-between rounded-lg">
-          <form onSubmit={dateHandleSubmit(handleDate)} className="flex gap-4 items-end">
+          <form
+            onSubmit={dateHandleSubmit(handleDate)}
+            className="flex gap-4 items-end"
+          >
             <div className="">
               <label className="font-semibold text-gray-700">From Date</label>
               <input
@@ -208,7 +207,9 @@ export default function Activities() {
                 type="date"
               />
               {dateError.toDate && (
-                <p className="text-red-600 text-xs">{dateError.toDate.message}</p>
+                <p className="text-red-600 text-xs">
+                  {dateError.toDate.message}
+                </p>
               )}
             </div>
 
@@ -227,13 +228,17 @@ export default function Activities() {
           <h2>TIMELINE ACTIVITY</h2>
           <div className="h-px w-full bg-zinc-300" />
 
+          {punchData.length === 0 && (
+            <div className="">No Data for current Timeline</div>
+          )}
+
           {punchData?.map((item, index) => (
             <div
               key={index}
               className="px-5 py-4 flex items-center justify-between"
             >
               <div className=" flex items-center gap-4">
-                <div className="relative">
+                <div>
                   <div className="h-9 z-10  w-9">
                     <img
                       className="h-full w-full object-cover  ring ring-zinc-300   rounded-full"
@@ -241,14 +246,16 @@ export default function Activities() {
                       alt=""
                     />
                   </div>
-                  {/* <div className="absolute -top-2.5 z-0 left-1/2 l w-px h-14 bg-zinc-300" /> */}
                 </div>
                 <div className="flex flex-col">
-                <h3 className="text-zinc-500 font-semibold ">
-                  {userData.firstName + " " + userData.lastName}
-                </h3>
-                { item.activity_type === "break_in" && <h4 className="text-zinc-400 text-sm">{item.description}</h4> }
-
+                  <h3 className="text-zinc-500 font-semibold ">
+                    {userData.firstName + " " + userData.lastName}
+                  </h3>
+                  {item.activity_type === "break_in" && (
+                    <h4 className="text-zinc-400 text-sm">
+                      {item.description}
+                    </h4>
+                  )}
                 </div>
                 <div className="w-0.5 h-6 bg-zinc-300" />
                 <h4 className="text-zinc-400">
@@ -256,7 +263,7 @@ export default function Activities() {
                   {item.activity_type === "punch_out" && "Punch Out"}
                   {item.activity_type === "break_in" && "Break In"}
                   {item.activity_type === "break_out" && "Break Out"}
-                  </h4>
+                </h4>
               </div>
               <div className=" mr-6">
                 <h4 className="text-sm text-zinc-500">
