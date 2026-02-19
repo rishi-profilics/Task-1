@@ -6,7 +6,7 @@ import PhoneInput from "../../ui/phone-input";
 import PasswordInput from "../../ui/password-input";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import Header from "../../ui/header";
+// import Header from "../../ui/header";
 import Layout from "../../ui/layout";
 
 export default function UpdateUser() {

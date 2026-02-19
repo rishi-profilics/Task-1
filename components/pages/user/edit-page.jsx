@@ -3,6 +3,7 @@ import Layout from "../../ui/layout";
 import { useForm } from "react-hook-form";
 import axios from "../../../utils/axios";
 import Tab from "../../ui/tab";
+import { formattedDate } from "../../../utils/format-date";
 
 export default function EditPage() {
   const FrontendSkills = ["HTML", "CSS", "JavaScript", "React", "Angulur"];
@@ -18,7 +19,6 @@ export default function EditPage() {
     register,
     handleSubmit,
     setValue,
-    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -27,39 +27,35 @@ export default function EditPage() {
     },
   });
 
+  const fetchProfile = async () => {
+    const user = await axios.get("/profile");
+    const userData = user.data.data;
+
+    setValue("firstName", userData.firstName);
+    setValue("lastName", userData.lastName);
+    setValue("email", userData.email);
+    setValue("gender", userData.gender);
+    setValue("dob", formattedDate(userData.dob));
+    setValue("department", userData.department);
+    setValue("joiningdate", formattedDate(userData.joiningdate));
+    setValue("mobile1", userData.mobile1);
+    setValue("address", userData.address);
+    setValue("skills.frontend", userData.skills?.frontend);
+    setValue("skills.backend", userData.skills?.backend);
+    setValue("aboutme", userData.aboutme);
+  };
+
+  
   useEffect(() => {
-    const fetchProfile = async () => {
-      const user = await axios.get("/profile");
-      const userData = user.data.data;
-     
-      console.log(userData)
-
-      
-      const formattedDob = userData?.dob ? userData.dob.split("T")[0] : "";
-      const formattedJoiningDate = userData?.joiningdate ? userData.joiningdate.split("T")[0] : "";
-
-      setValue("firstName", userData.firstName);
-      setValue("lastName", userData.lastName);
-      setValue("email", userData.email);
-      setValue("gender", userData.gender);
-      setValue("dob", formattedDob);
-      setValue("department", userData.department);
-      setValue("joiningdate", formattedJoiningDate);
-      setValue("mobile1", userData.mobile1);
-      setValue("address", userData.address);
-      setValue("skills.frontend", userData.skills?.frontend);
-      setValue("skills.backend", userData.skills?.backend);
-      setValue("aboutme", userData.aboutme);
-    };
-    fetchProfile(); //create a function and then call it to fetch a api
-  });
+    fetchProfile();
+  }, []);
 
   const onSubmit = (data) => {
     const updateUser = async () => {
-        const user = await axios.put("/profile", data)
-    }
+      const user = await axios.put("/profile", data);
+    };
 
-    updateUser()
+    updateUser();
     console.log(data);
     // reset(  )
   };
@@ -67,7 +63,7 @@ export default function EditPage() {
   return (
     <Layout>
       <div className="p-6">
-        <Tab/>
+        <Tab />
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="bg-zinc-100 p-4 w-full space-y-6 rounded-lg"
@@ -77,7 +73,7 @@ export default function EditPage() {
             <h1 className="heading">Edit Profile</h1>
           </div>
           <div className="grid grid-cols-6 gap-3 gap-y-4 w-full">
-            <div className="col-span-3">
+            <div className="col-span-6 md:col-span-3">
               <label className="font-semibold text-gray-700">First Name</label>
               <input
                 {...register("firstName", {
@@ -98,7 +94,7 @@ export default function EditPage() {
               )}
             </div>
 
-            <div className="col-span-3">
+            <div className="col-span-6 md:col-span-3">
               <label className="font-semibold text-gray-700">Last Name</label>
               <input
                 {...register("lastName")}
@@ -108,7 +104,7 @@ export default function EditPage() {
               />
             </div>
 
-            <div className="col-span-2">
+            <div className="col-span-6 md:col-span-2">
               <label className="font-semibold text-gray-700">
                 Email Address
               </label>
@@ -129,7 +125,7 @@ export default function EditPage() {
               )}
             </div>
 
-            <div className="col-span-2">
+            <div className="col-span-6 md:col-span-2">
               <label className="font-semibold text-gray-700">Gender</label>
               <select {...register("gender")} className="input" name="gender">
                 <option value="" disabled>
@@ -143,7 +139,7 @@ export default function EditPage() {
               </select>
             </div>
 
-            <div className="col-span-2">
+            <div className="col-span-6 md:col-span-2">
               <label className="font-semibold text-gray-700">DOB</label>
               <input
                 {...register("dob", {
@@ -162,7 +158,7 @@ export default function EditPage() {
               )}
             </div>
 
-            <div className="col-span-3">
+            <div className="col-span-6 md:col-span-3">
               <label className="font-semibold text-gray-700">
                 Select Department
               </label>
@@ -178,7 +174,7 @@ export default function EditPage() {
               </select>
             </div>
 
-            <div className="col-span-3">
+            <div className="col-span-6 md:col-span-3">
               <label className="font-semibold text-gray-700">
                 Joining Date
               </label>
@@ -195,11 +191,13 @@ export default function EditPage() {
                 type="date"
               />
               {errors.joiningdate && (
-                <p className="text-red-600 text-xs">{errors.joiningdate.message}</p>
+                <p className="text-red-600 text-xs">
+                  {errors.joiningdate.message}
+                </p>
               )}
             </div>
 
-            <div className="col-span-2">
+            <div className="col-span-6 md:col-span-2">
               <label className="font-semibold text-gray-700">
                 Mobile no. 1
               </label>
@@ -220,7 +218,7 @@ export default function EditPage() {
               )}
             </div>
 
-            <div className="col-span-2">
+            <div className="col-span-6 md:col-span-2">
               <label className="font-semibold text-gray-700">
                 Mobile no. 2
               </label>
@@ -232,7 +230,7 @@ export default function EditPage() {
               />
             </div>
 
-            <div className="col-span-2">
+            <div className="col-span-6 md:col-span-2">
               <label className="font-semibold text-gray-700">Password</label>
               <input
                 {...register("password", {
@@ -276,12 +274,12 @@ export default function EditPage() {
           <div className="space-y-5">
             <div>
               <h2 className="heading2">Frontend</h2>
-              <div className="flex mt-2 gap-4">
+              <div className="flex flex-wrap mt-2 gap-4">
                 {FrontendSkills.map((item, index) => (
-                  <div key={index} name={item} className="flex gap-2">
+                  <div key={index} name={item} className="flex  gap-2">
                     <input
-                      {...register("skills.frontend",{
-                        required: "Select atleast one Frontend Skill"
+                      {...register("skills.frontend", {
+                        required: "Select atleast one Frontend Skill",
                       })}
                       type="checkbox"
                       value={item}
@@ -291,18 +289,20 @@ export default function EditPage() {
                 ))}
               </div>
               {errors.skills?.frontend && (
-                <p className="text-red-600 text-xs">{errors.skills?.frontend.message}</p>
+                <p className="text-red-600 text-xs">
+                  {errors.skills?.frontend.message}
+                </p>
               )}
             </div>
 
             <div>
               <h2 className="heading2">Backend</h2>
-              <div className="flex mt-2 gap-4">
+              <div className="flex flex-wrap mt-2 gap-4">
                 {BackendSkills.map((item, index) => (
-                  <div key={index} name={item} className="flex gap-2">
+                  <div key={index} name={item} className="flex  gap-2">
                     <input
                       {...register("skills.backend", {
-                        required: "Select at least one backend skills"
+                        required: "Select at least one backend skills",
                       })}
                       type="checkbox"
                       value={item}
@@ -312,7 +312,9 @@ export default function EditPage() {
                 ))}
               </div>
               {errors.skills?.backend && (
-                <p className="text-red-600 text-xs">{errors.skills?.backend.message}</p>
+                <p className="text-red-600 text-xs">
+                  {errors.skills?.backend.message}
+                </p>
               )}
             </div>
           </div>
@@ -327,11 +329,7 @@ export default function EditPage() {
           <hr className="text-zinc-400" />
 
           <div className="flex justify-end">
-            <input
-              type="submit"
-              value="Update Profile"
-              className="button2"
-            />
+            <input type="submit" value="Update Profile" className="button2" />
           </div>
         </form>
       </div>

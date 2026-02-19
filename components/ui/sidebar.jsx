@@ -1,5 +1,6 @@
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
+import { FaRocket } from "react-icons/fa";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { FiArrowRight } from "react-icons/fi";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
@@ -7,7 +8,7 @@ import { Link, useLocation } from "react-router-dom";
 
 export default function Sidebar() {
   const tabs = [
-    { name: "HRMS", link: "/hrms" },
+    // { name: "HRMS", link: "/hrms" },
     { name: "Dashboard", link: "/dashboard" },
     { name: "Activities", link: "/activities" },
     { name: "Holidays", link: "/holidays" },
@@ -24,7 +25,7 @@ export default function Sidebar() {
 
   return (
     <div
-      className={`z-10 top-0 left-0 w-80 sticky h-screen p-6 bg-zinc-100 shadow-xl`}
+      className={`z-10 top-0 left-0 w-80 sticky h-screen  max-xl:hidden  overflow-y-auto p-6 bg-zinc-100 shadow-xl`}
     >
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-semibold text-lg text-zinc-600 ">
@@ -32,6 +33,7 @@ export default function Sidebar() {
         </h1>
       </div>
       <div className="space-y-4">
+        <button aria-disabled className="flex items-center gap-3 text-zinc-600"><FaRocket /> HRMS</button>
         {tabs.map((item, index) => (
           <Link
             to={item.link}

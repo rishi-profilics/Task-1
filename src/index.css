@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 
   .input {
@@ -20,3 +21,40 @@
   .button2 {
     @apply px-5 py-1.5 border border-[#5f4d76] cursor-pointer text-white bg-[#5f4d76] rounded-sm
   }
+
+  .label {
+    @apply font-semibold text-gray-700
+  }
+
+  .fc .fc-button {
+  @apply bg-[#e4e4e7] text-black border-none rounded-lg px-4 py-2;
+}
+
+.fc .fc-button:hover {
+  @apply bg-zinc-500;
+}
+
+.fc .fc-daygrid-day-frame {
+  @apply flex flex-col h-full p-1 relative;
+}
+
+.fc .fc-daygrid-day-top {
+  @apply flex justify-start;
+}
+
+.fc .fc-day-today {
+  @apply bg-pink-200!;
+}
+
+
+.fc .fc-button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
+/* Selected view button */
+.fc .fc-button-active {
+  background-color: #a5a7ad !important;
+  color: white !important;
+}

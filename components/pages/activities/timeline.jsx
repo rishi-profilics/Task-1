@@ -1,12 +1,16 @@
 import React from "react";
 import Layout from "../../ui/layout";
+import Tab from "../../ui/tab";
 import TimelineActivities from "./timeline-activities";
 
-export default function Activities() {
+
+export default function Timeline() {
+
   return (
     <Layout>
       <div className="p-6">
-      <TimelineActivities/>
+        <Tab />
+        <TimelineActivities/>
       </div>
     </Layout>
   );

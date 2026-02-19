@@ -21,9 +21,9 @@ import NotFound from "../components/pages/not-found/not-found";
 import Login from "../components/pages/auth/login";
 import Register from "../components/pages/auth/register";
 import EditPage from "../components/pages/user/edit-page";
-import Calender from "../components/pages/calender/calender";
-import Timeline from "../components/pages/timeline/timeline";
 import { ToastContainer } from "react-toastify";
+import Timeline from "../components/pages/activities/timeline";
+import CalenderPage from "../components/pages/calender/calender-page";
 
 export default function App() {
   return (
@@ -48,7 +48,7 @@ export default function App() {
           <Route path="/referrals" element={<Referral />} />
           <Route path="/tickets" element={<Ticket />} />
           <Route path="/hrms" element={<HRMS />} />
-          <Route path="/calender" element={<Calender />} />
+          <Route path="/calender" element={<CalenderPage />} />
           <Route path="/timeline" element={<Timeline />} />
         </Route>
 
