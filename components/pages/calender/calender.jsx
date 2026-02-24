@@ -9,10 +9,6 @@ import dayjs from "dayjs";
 export default function Calender({ selectedYear }) {
   const [reports, setReports] = useState([]);
 
-  useEffect(() => {
-    fetchReports();
-  }, []);
-
   const fetchReports = async () => {
     try {
       const res = await axios.get("/allreport");
@@ -50,6 +46,11 @@ export default function Calender({ selectedYear }) {
     console.log(map);
     return map;
   }, [reports]);
+
+    useEffect(() => {
+    fetchReports();
+  }, []);
+
 
   return (
     <div className="bg-zinc-100 p-5 overflow-hidden rounded-xl">

@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { IoIosClose, IoIosSave } from 'react-icons/io';
 import { formatTime } from '../../../utils/time-format';
 import { useLocation } from 'react-router-dom';
+import dayjs from 'dayjs';
 
 export default function TimelineActivities() {
       const {
@@ -18,7 +19,6 @@ export default function TimelineActivities() {
   const {
     register: dateRegister,
     handleSubmit: dateHandleSubmit,
-    reset: dateReset,
     setValue: dateValue,
     formState: { errors: dateError },
   } = useForm();
@@ -146,7 +146,8 @@ export default function TimelineActivities() {
     );
   }
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = dayjs().format("YYYY-MM-DD")
+  console.log(today)
 
   useEffect(() => {
     checkPunch({ fromDate: today, toDate: today });

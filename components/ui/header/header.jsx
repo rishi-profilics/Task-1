@@ -34,84 +34,41 @@ export default function Header() {
     { name: "Profiles", link: "/" },
     { name: "Calender", link: "/calender" },
     { name: "Timeline", link: "/timeline" },
-    // {name: "", link: '/users'},
   ];
+
+  const routeTitles = {
+    "/": "Edit Users",
+    "/calender": "Calender",
+    "/timeline": "Timeline",
+    "/activities": "Activities",
+    "/holidays": "Holidays",
+    "/events": "Events",
+    "/reports": "Reports",
+    "/gallery": "Gallery",
+    "/todo-list": "Todo List",
+    "/notifications": "Notifications",
+    "/referrals": "Referrals",
+    "/ticket": "Tickets",
+  };
 
   const handleCloseDropdown = () => {
     setDropdown(false);
   };
 
-  useEffect(() => {
-    const getCurrectData = async () => {
-      try {
-        const res = await axios.get("/activity/today", {
-          params: {
-            fromDate: new Date(),
-            toDate: new Date(),
-          },
-        });
-        const userData = res.data.data;
-        setCurrentData(userData);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getCurrectData();
-  }, [punchData]);
-
-  useEffect(() => {
-    if (pathname === "/") {
-      setLogo("Edit Users");
+  const getCurrectData = async () => {
+    try {
+      const res = await axios.get("/activity/today", {
+        params: {
+          fromDate: new Date(),
+          toDate: new Date(),
+        },
+      });
+      const userData = res.data.data;
+      setCurrentData(userData);
+    } catch (error) {
+      console.log(error);
     }
-
-    if (pathname === "/calender") {
-      setLogo("Calender");
-    }
-
-    if (pathname === "/timeline") {
-      setLogo("Timeline");
-    }
-
-    if (pathname === "/activities") {
-      setLogo("Activities");
-    }
-
-    if (pathname === "/holidays") {
-      setLogo("Holidays");
-    }
-
-    if (pathname === "/events") {
-      setLogo("Events");
-    }
-
-    if (pathname === "/reports") {
-      setLogo("Reports");
-    }
-
-    if (pathname === "/gallery") {
-      setLogo("Gallery");
-    }
-
-    if (pathname === "/todo-list") {
-      setLogo("Todo List");
-    }
-
-    if (pathname === "/notifications") {
-      setLogo("Notifications");
-    }
-
-    if (pathname === "/referrals") {
-      setLogo("Referrals");
-    }
-
-    if (pathname === "/ticket") {
-      setLogo("Tickets");
-    }
-
-    // if (pathname.includes("/users")) {
-    //   setLogo("View Users");
-    // }
-  }, [pathname]);
+  };
 
   const handleSignout = () => {
     localStorage.removeItem("token");
@@ -139,16 +96,15 @@ export default function Header() {
       });
       checkPunch(filterDateData);
 
-      toast.success(res.data.message);
+      toast.success(res?.data.message);
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data.message);
     }
   };
 
   const submitReport = async (data) => {
     try {
       const res = await axios.post("/report", data);
-      console.log(res);
       reset();
       handlePunchInOut();
       setIsReportOpen(false);
@@ -193,6 +149,14 @@ export default function Header() {
 
     return `${hours}:${minutes}`;
   };
+
+  useEffect(() => {
+    getCurrectData();
+  }, [punchData]);
+
+  useEffect(() => {
+    setLogo(routeTitles[pathname] || "Dashboard");
+  }, [pathname]);
 
   useEffect(() => {
     const start_time = formatToTimeInput(punchInActivity?.createdAt);

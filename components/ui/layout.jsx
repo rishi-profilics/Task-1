@@ -7,7 +7,7 @@ export default function Layout({children}) {
   return (
     <div className="flex min-h-screen flex-1">
       <Sidebar />
-      <div className="bg-zinc-300 relative min-h-screen space-y-12 w-full ">
+      <div className="bg-zinc-200 relative min-h-screen space-y-12 w-full ">
        <Header />
         {children}
       </div>

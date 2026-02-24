@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import axios from "../../../utils/axios";
 import { formattedDate } from "../../../utils/format-date";
 import dayjs from "dayjs";
+import Pagination from "@mui/material/Pagination";
 
 import { MdDelete, MdEdit } from "react-icons/md";
 
@@ -13,6 +14,8 @@ export default function Holidays() {
   const [handleDialogue, setHandleDialogue] = useState(false);
   const [handleEditDialogue, setHandleEditDialogue] = useState(false);
   const [singleHolidayData, setSingleHolidayData] = useState(null);
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 2;
 
   const {
     register,
@@ -56,9 +59,17 @@ export default function Holidays() {
     }
   };
 
+  const paginatedData = holidayData?.slice(
+    (page - 1) * rowsPerPage,
+    page * rowsPerPage,
+  );
+
   const onUpdate = async (data) => {
     try {
-      await axios.put(`/holiday/${singleHolidayData}`, { ...data, event_type: "holiday" });
+      await axios.put(`/holiday/${singleHolidayData}`, {
+        ...data,
+        event_type: "holiday",
+      });
       toast.success("Holiday Updated");
       setHandleEditDialogue(false);
       updateReset();
@@ -69,11 +80,11 @@ export default function Holidays() {
   };
 
   const editHoliday = (data) => {
-    setSingleHolidayData(data._id)
-    setHandleEditDialogue(true)
-    setValue("name", data.name)
-    setValue("event_on", dayjs(data.event_on).format("YYYY-MM-DD"))
-  }
+    setSingleHolidayData(data._id);
+    setHandleEditDialogue(true);
+    setValue("name", data.name);
+    setValue("event_on", dayjs(data.event_on).format("YYYY-MM-DD"));
+  };
 
   const deleteHoliday = async (id) => {
     try {
@@ -86,6 +97,16 @@ export default function Holidays() {
   };
 
   useEffect(() => {
+    if (!holidayData) return;
+
+    const totalPages = Math.ceil(holidayData.length / rowsPerPage);
+
+    if (page > totalPages && totalPages > 0) {
+      setPage(totalPages);
+    }
+  }, [holidayData]);
+
+  useEffect(() => {
     fetchHoliday();
   }, []);
 
@@ -95,7 +116,7 @@ export default function Holidays() {
         <div className="bg-zinc-100 space-y-15 p-4 w-full rounded-lg">
           <div className="space-y-10 ">
             <div className="flex justify-between items-center">
-              <h1 className="font-normal text-lg">Holiday</h1>
+              <h1 className="font-normal text-lg">Holiday Lists</h1>
               <button
                 onClick={() => setHandleDialogue(true)}
                 className="button2"
@@ -104,18 +125,19 @@ export default function Holidays() {
               </button>
             </div>
             <div className="overflow-x-auto">
-              <div className="min-w-4xl  space-y-8 ">
+              <div className="min-w-4xl  mb-10 h-80  space-y-8 ">
                 <div className="grid grid-cols-5">
                   <h2 className=" text-zinc-700 ml-2 w-full">DATE</h2>
                   <h2 className=" text-zinc-700 w-full">NAME</h2>
                   <h2 className=" text-zinc-700 w-full">CREATED AT</h2>
                   <h2 className=" text-zinc-700 w-full">UPDATED AT</h2>
+                  <h2 className=" text-zinc-700 w-full">ACTIONS</h2>
                 </div>
                 <hr className="text-zinc-300" />
                 {holidayData?.length === 0 && (
                   <div className="">No holiday available</div>
                 )}
-                {holidayData?.map((item, index) => (
+                {paginatedData?.map((item, index) => (
                   <div key={index} className="grid grid-cols-5">
                     <p className="w-full ml-1  text-zinc-500 text-sm ">
                       {formattedDate(item.event_on)}{" "}
@@ -148,6 +170,16 @@ export default function Holidays() {
                   </div>
                 ))}
               </div>
+              {holidayData?.length > rowsPerPage && (
+                <div className="flex justify-end mt-6">
+                  <Pagination
+                    count={Math.ceil(holidayData.length / rowsPerPage)}
+                    page={page}
+                    shape="rounded"
+                    onChange={(event, value) => setPage(value)}
+                  />
+                </div>
+              )}
             </div>
           </div>
 

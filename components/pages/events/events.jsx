@@ -65,7 +65,7 @@ export default function Events() {
           <div className="flex items-center gap-2">
             <label>Year: </label>
             <select
-              className="appearance-none input w-20! mt-0!"
+              className="outline-none input w-20! mt-0!"
               value={selectedYear}
               onChange={(e) => setSelectedYear(Number(e.target.value))}
             >
@@ -152,7 +152,7 @@ export default function Events() {
               <h2 className="font-normal">EVENT CALENDAR</h2>
               <select
                 onClick={(e) => setCalenderFilter(e.target.value)}
-                className="appearance-none input w-28!"
+                className="outline-none input w-28!"
               >
                 <option value="event">Event</option>
                 <option value="report">Report</option>

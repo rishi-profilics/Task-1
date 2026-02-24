@@ -1,9 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../ui/layout";
 import { useForm } from "react-hook-form";
 import axios from "../../../utils/axios";
 import Tab from "../../ui/tab";
-import { formattedDate } from "../../../utils/format-date";
+// import { formattedDate } from "../../../utils/format-date";
+import { toast } from "react-toastify";
+import { formattedInputDate } from "../../../utils/formate-input-date";
+import UserDetailCard from "../../ui/user-detail-card";
 
 export default function EditPage() {
   const FrontendSkills = ["HTML", "CSS", "JavaScript", "React", "Angulur"];
@@ -26,7 +29,7 @@ export default function EditPage() {
       gender: "",
     },
   });
-
+  
   const fetchProfile = async () => {
     const user = await axios.get("/profile");
     const userData = user.data.data;
@@ -35,9 +38,9 @@ export default function EditPage() {
     setValue("lastName", userData.lastName);
     setValue("email", userData.email);
     setValue("gender", userData.gender);
-    setValue("dob", formattedDate(userData.dob));
+    setValue("dob", formattedInputDate(userData.dob));
     setValue("department", userData.department);
-    setValue("joiningdate", formattedDate(userData.joiningdate));
+    setValue("joiningdate", formattedInputDate(userData.joiningdate));
     setValue("mobile1", userData.mobile1);
     setValue("address", userData.address);
     setValue("skills.frontend", userData.skills?.frontend);
@@ -50,19 +53,15 @@ export default function EditPage() {
     fetchProfile();
   }, []);
 
-  const onSubmit = (data) => {
-    const updateUser = async () => {
-      const user = await axios.put("/profile", data);
-    };
-
-    updateUser();
-    console.log(data);
-    // reset(  )
+  const onSubmit = async (data) => {
+       await axios.put("/profile", data);
+       toast.success("Profile info updated successfully")
   };
 
   return (
     <Layout>
       <div className="p-6">
+        <UserDetailCard/>
         <Tab />
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -179,14 +178,7 @@ export default function EditPage() {
                 Joining Date
               </label>
               <input
-                {...register("joiningdate", {
-                  required: "Joining Date is required",
-                  validate: (value) => {
-                    return (
-                      new Date(value) > new Date() || "Select a Correct date"
-                    );
-                  },
-                })}
+                {...register("joiningdate")}
                 className="input"
                 type="date"
               />
@@ -253,13 +245,7 @@ export default function EditPage() {
             <div className="col-span-6">
               <label className="font-semibold text-gray-700">Address</label>
               <input
-                {...register("address", {
-                  required: "Address is required",
-                  minLength: {
-                    value: 3,
-                    message: "Should contain atleast 3 characters",
-                  },
-                })}
+                {...register("address")}
                 type="text"
                 className="input"
                 placeholder="Address"
