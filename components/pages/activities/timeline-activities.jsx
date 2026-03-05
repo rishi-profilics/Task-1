@@ -26,7 +26,7 @@ export default function TimelineActivities() {
   const [userData, setUserData] = useState([]);
   const [isDialogueOpen, setIsDialogueOpen] = useState(false);
 
-  const { filterDateData, punchData, checkPunch } = useContext(ActivityContext);
+  const { filterDateData, punchData, checkPunch,  profileImage } = useContext(ActivityContext);
 
     const {pathname} = useLocation()
 
@@ -238,7 +238,7 @@ export default function TimelineActivities() {
                   <div className="h-9 z-10  w-9">
                     <img
                       className="h-full w-full object-cover  ring ring-zinc-300   rounded-full"
-                      src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
+                      src= {profileImage ? profileImage : "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"}
                       alt=""
                     />
                   </div>

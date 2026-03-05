@@ -5,6 +5,8 @@ const ActivityContext = createContext(null);
 
 export const ActivityProvider = ({ children }) => {
   const [punchData, setPunchData] = useState(null);
+  const [profileImage, setProfileImage] = useState(null)
+  const [profileData, setProfileData] = useState(null)
   const [filterDateData, setfilterDateData] = useState({
     fromDate:'',
     toDate:''
@@ -28,13 +30,31 @@ export const ActivityProvider = ({ children }) => {
     }
   };
 
+  const fetchGalleryImage = async () => {
+    const images = await axios.get("/api/gallery", {
+      params: {
+        order: "newest",
+      },
+    });
+    setProfileImage(images.data.data[0]?.image_url);
+  };
+
+  const fetchProfile = async () => {
+    const images = await axios.get("/profile");
+    setProfileData(images.data?.data);
+  };
+
   return (
     <ActivityContext.Provider
       value={{
         punchData,
         setPunchData,
         checkPunch,
+        fetchProfile,
+        profileData,
         filterDateData,
+        fetchGalleryImage,
+        profileImage
       }}
     >
       {children}

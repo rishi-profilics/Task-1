@@ -149,6 +149,7 @@ export default function Reports() {
                 <Controller
                   name="report"
                   control={control}
+                  
                   render={({ field }) => (
                     <div className="h-full">
                       <TiptapEditor

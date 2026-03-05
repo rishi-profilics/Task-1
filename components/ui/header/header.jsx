@@ -16,7 +16,7 @@ export default function Header() {
   const [currentData, setCurrentData] = useState(null);
   const [isReportOpen, setIsReportOpen] = useState(false);
   const { pathname } = useLocation();
-  const { punchData, filterDateData, checkPunch } = useContext(ActivityContext);
+  const { punchData, filterDateData, checkPunch, profileImage, fetchGalleryImage } = useContext(ActivityContext);
   const {
     register,
     handleSubmit,
@@ -149,6 +149,10 @@ export default function Header() {
 
     return `${hours}:${minutes}`;
   };
+
+  useEffect(() => {
+    fetchGalleryImage()
+  },[])
 
   useEffect(() => {
     getCurrectData();
@@ -307,8 +311,9 @@ export default function Header() {
           setIsReportOpen={setIsReportOpen}
         />
         <div className="relative ">
-          <button onClick={handleDropdown} className="p-3 cursor-pointer">
-            <FaUser />
+          <button onClick={handleDropdown} className="h-10 w-10 rounded-full overflow-hidden flex items-center justify-center cursor-pointer">
+            {profileImage ? <img src={profileImage} /> :  <FaUser />}
+           
           </button>
 
           <div

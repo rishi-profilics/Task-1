@@ -9,6 +9,7 @@ import { formattedInputDate } from "../../../utils/formate-input-date";
 import UserDetailCard from "../../ui/user-detail-card";
 
 export default function EditPage() {
+  const [userDetail, setUserDetail] = useState(null);
   const FrontendSkills = ["HTML", "CSS", "JavaScript", "React", "Angulur"];
   const BackendSkills = ["PHP", "Laravel", "Python", "Node.js"];
   const GenderOptions = ["Male", "Female"];
@@ -29,7 +30,7 @@ export default function EditPage() {
       gender: "",
     },
   });
-  
+
   const fetchProfile = async () => {
     const user = await axios.get("/profile");
     const userData = user.data.data;
@@ -48,20 +49,23 @@ export default function EditPage() {
     setValue("aboutme", userData.aboutme);
   };
 
-  
   useEffect(() => {
     fetchProfile();
   }, []);
 
   const onSubmit = async (data) => {
-       await axios.put("/profile", data);
-       toast.success("Profile info updated successfully")
+    await axios.put("/profile", data);
+    toast.success("Profile info updated successfully");
+    setUserDetail({
+      firstName: data.firstName,
+      lastName: data.lastName,
+    });
   };
 
   return (
     <Layout>
       <div className="p-6">
-        <UserDetailCard/>
+        <UserDetailCard userDetail={userDetail} />
         <Tab />
         <form
           onSubmit={handleSubmit(onSubmit)}
