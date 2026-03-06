@@ -22,6 +22,8 @@ export default function Dashboard() {
   const [userData, setUserData] = useState(null);
   const [updateID, setUpdateID] = useState(null);
   const [handleUpdateDialogue, setHandleUpdateDialogue] = useState(false);
+  const [openDeleteConfermationDialogue, setopenDeleteConfermationDialogue] = useState(false)
+  const [deleteProjectId, setDeleteProjectId] = useState(null)
   const [showMoreData, setShowMoreData] = useState({
     title: "",
     items: [],
@@ -93,14 +95,21 @@ export default function Dashboard() {
     }
   };
 
-  const deleteProjectById = async (id) => {
+  const openDeleteDialogue = (id) => {
+    setDeleteProjectId(id)
+    setopenDeleteConfermationDialogue(true)
+  }
+
+  const deleteProjectById = async () => {
     try {
-      const res = await axios.delete(`/api/project/${id}`);
+      await axios.delete(`/api/project/${deleteProjectId}`);
       toast.success("Project deleted successfully");
       getProjectData({
         fromDate: selectedFilteredDate.fromDate,
         toDate: selectedFilteredDate.toDate,
       });
+      setopenDeleteConfermationDialogue(false)
+      setDeleteProjectId(null)
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -170,6 +179,35 @@ export default function Dashboard() {
     setHandleShowMoreDialogue(true);
   };
 
+  function DeleteProject() {
+    return (
+      <div
+          className={`fixed inset-0 z-20 ${
+            !openDeleteConfermationDialogue && "hidden"
+          } bg-black/30 flex items-center mb-0 justify-center p-3`}
+        >
+          <div className="bg-zinc-100  rounded-lg w-xl">
+            <div className="flex px-6 py-4 border-b border-zinc-300 justify-between">
+              <h2 className="text-lg">
+                Do you want to delete this Project?
+              </h2>
+            </div>
+            <div className="flex items-center gap-3 p-4 justify-end">
+              <button
+                onClick={() => setopenDeleteConfermationDialogue(false)}
+                className="button cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button onClick={() => deleteProjectById()}  className="button2">
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+    )
+  }
+
   function ShowMore() {
     return (
       <div
@@ -224,64 +262,70 @@ export default function Dashboard() {
   return (
     <Layout>
       <div className="p-6 space-y-4">
-        <div className="bg-zinc-100 p-4 w-full gap-4 flex max-md:flex-col md:items-end justify-between rounded-lg">
-          <form
-            onSubmit={dateHandleSubmit(dateSubmit)}
-            className="flex gap-4 max-md:flex-col md:items-end"
-          >
-            <div className="flex items-center max-sm:flex-col gap-2">
-              <div className=" max-md:w-full">
-                <label className="font-semibold text-gray-700">From Date</label>
-                <input
-                  {...dateRegister("fromDate", {
-                    required: "From date is required",
-                    validate: (value) => {
-                      return (
-                        new Date(value) < new Date() || "Select a Correct date"
-                      );
-                    },
-                  })}
-                  className="input"
-                  type="date"
-                />
-                {dateError.fromDate && (
-                  <p className="text-red-600 text-xs">
-                    {dateError.fromDate.message}
-                  </p>
-                )}
+        {profileData?.role === "admin" && (
+          <div className="bg-zinc-100 p-4 w-full gap-4 flex max-md:flex-col md:items-end justify-between rounded-lg">
+            <form
+              onSubmit={dateHandleSubmit(dateSubmit)}
+              className="flex gap-4 max-md:flex-col md:items-end"
+            >
+              <div className="flex items-center max-sm:flex-col gap-2">
+                <div className=" max-md:w-full">
+                  <label className="font-semibold text-gray-700">
+                    From Date
+                  </label>
+                  <input
+                    {...dateRegister("fromDate", {
+                      required: "From date is required",
+                      validate: (value) => {
+                        return (
+                          new Date(value) < new Date() ||
+                          "Select a Correct date"
+                        );
+                      },
+                    })}
+                    max={new Date().toISOString().split("T")[0]}
+                    className="input"
+                    type="date"
+                  />
+                  {dateError.fromDate && (
+                    <p className="text-red-600 text-xs">
+                      {dateError.fromDate.message}
+                    </p>
+                  )}
+                </div>
+                <div className=" max-md:w-full">
+                  <label className="font-semibold text-gray-700">To Date</label>
+                  <input
+                    {...dateRegister("toDate", {
+                      required: "To date is required",
+                      validate: (value) => {
+                        return (
+                          new Date(value) < new Date() ||
+                          "Select a Correct date"
+                        );
+                      },
+                    })}
+                    max={new Date().toISOString().split("T")[0]}
+                    className="input"
+                    type="date"
+                  />
+                  {dateError.toDate && (
+                    <p className="text-red-600 text-xs">
+                      {dateError.toDate.message}
+                    </p>
+                  )}
+                </div>
               </div>
-              <div className=" max-md:w-full">
-                <label className="font-semibold text-gray-700">To Date</label>
-                <input
-                  {...dateRegister("toDate", {
-                    required: "To date is required",
-                    validate: (value) => {
-                      return (
-                        new Date(value) < new Date() || "Select a Correct date"
-                      );
-                    },
-                  })}
-                  className="input"
-                  type="date"
-                />
-                {dateError.toDate && (
-                  <p className="text-red-600 text-xs">
-                    {dateError.toDate.message}
-                  </p>
-                )}
-              </div>
-            </div>
 
-            <button type="submit" className="button2 ">
-              Apply
-            </button>
-          </form>
-          {profileData?.role === "admin" && (
+              <button type="submit" className="button2 ">
+                Apply
+              </button>
+            </form>
             <button onClick={() => setHandleDialogue(true)} className="button2">
               Add Project
             </button>
-          )}
-        </div>
+          </div>
+        )}
         <div className="bg-zinc-100 space-y-15 p-4 w-full rounded-lg">
           <ShowMore />
           <div className="space-y-10 mb-0 ">
@@ -289,8 +333,10 @@ export default function Dashboard() {
               <h1 className="font-normal text-lg">Project Lists</h1>
             </div>
             <div className=" max-w-280 overflow-x-auto">
-              <div className="min-w-280 min-h-80 space-y-8 ">
-                <div className={`grid ${profileData?.role === "admin" ? "grid-cols-5" : "grid-cols-4"}  gap-x-8`}>
+              <div className="min-w-280 min-h-80 space-y-6">
+                <div
+                  className={`grid ${profileData?.role === "admin" ? "grid-cols-5" : "grid-cols-4"}  gap-x-8`}
+                >
                   <h2 className=" text-zinc-700 ml-2 w-full">PROJECT NAME</h2>
                   <h2 className=" text-zinc-700 w-full">CLIENT NAME</h2>
                   <h2 className=" text-zinc-700 w-full">TECHNOLOGY</h2>
@@ -305,77 +351,80 @@ export default function Dashboard() {
                     Project not available
                   </div>
                 )}
-                {paginatedData?.map((item, index) => (
-                  <div
-                    key={index}
-                    className={`grid ${profileData?.role === "admin" ? "grid-cols-5" : "grid-cols-4"} gap-x-8 items-start`}
-                  >
-                    <p className="w-full pl-1  text-zinc-500 text-sm ">
-                      {item.projectname}
-                    </p>
-                    <p className="w-full pl-1 text-zinc-500 text-sm">
-                      {item.clientname}
-                    </p>
-                    <p className="w-full pl-1 flex flex-wrap gap-x-3   text-zinc-500 text-sm">
-                      {item.technology.slice(0, 1).map((tech) => (
-                        <span key={tech}>{tech}</span>
-                      ))}
+                <div className="space-y-8">
+                  <DeleteProject/>
+                  {paginatedData?.map((item, index) => (
+                    <div
+                      key={index}
+                      className={`grid ${profileData?.role === "admin" ? "grid-cols-5" : "grid-cols-4"} gap-x-8 items-start`}
+                    >
+                      <p className="w-full pl-1  text-zinc-500 text-sm ">
+                        {item.projectname}
+                      </p>
+                      <p className="w-full pl-1 text-zinc-500 text-sm">
+                        {item.clientname}
+                      </p>
+                      <p className="w-full pl-1 flex flex-wrap gap-x-3   text-zinc-500 text-sm">
+                        {item.technology.slice(0, 1).map((tech) => (
+                          <span key={tech}>{tech}</span>
+                        ))}
 
-                      {item.technology.length > 1 && (
-                        <span
-                          onClick={() =>
-                            showMoreDialogue("Technology", item.technology)
-                          }
-                          className="text-sky-700 cursor-pointer"
-                        >
-                          +{item.technology.length - 1} more
-                        </span>
-                      )}
-                    </p>
-                    <p className="w-full pl-1 text-zinc-500 flex flex-wrap gap-x-3 text-sm">
-                      {item.teammembers.slice(0, 1).map((per) => (
-                        <span key={per._id}>
-                          {per.firstName} {per.lastName}
-                        </span>
-                      ))}
-
-                      {item.teammembers?.length > 1 && (
-                        <span
-                          onClick={() =>
-                            showMoreDialogue(
-                              "Team Members",
-                              item.teammembers.map(
-                                (member) =>
-                                  `${member.firstName} ${member.lastName}`,
-                              ),
-                            )
-                          }
-                          className="text-sky-700 cursor-pointer"
-                        >
-                          +{item.teammembers.length - 1} more
-                        </span>
-                      )}
-                    </p>
-                    {profileData?.role === "admin" && (
-                      <div className="flex gap-4 items-center">
-                        <button
-                          onClick={() => deleteProjectById(item._id)}
-                          className="w-fit pl-1 cursor-pointer text-zinc-500 text-xl"
-                        >
-                          <MdDelete />
-                        </button>
-                        <>
-                          <button
-                            onClick={() => editProject(item)}
-                            className="w-fit cursor-pointer text-zinc-500 text-xl"
+                        {item.technology.length > 1 && (
+                          <span
+                            onClick={() =>
+                              showMoreDialogue("Technology", item.technology)
+                            }
+                            className="text-sky-700 cursor-pointer"
                           >
-                            <MdEdit />
+                            +{item.technology.length - 1} more
+                          </span>
+                        )}
+                      </p>
+                      <p className="w-full pl-1 text-zinc-500 flex flex-wrap gap-x-3 text-sm">
+                        {item.teammembers.slice(0, 1).map((per) => (
+                          <span key={per._id}>
+                            {per.firstName} {per.lastName}
+                          </span>
+                        ))}
+
+                        {item.teammembers?.length > 1 && (
+                          <span
+                            onClick={() =>
+                              showMoreDialogue(
+                                "Team Members",
+                                item.teammembers.map(
+                                  (member) =>
+                                    `${member.firstName} ${member.lastName}`,
+                                ),
+                              )
+                            }
+                            className="text-sky-700 cursor-pointer"
+                          >
+                            +{item.teammembers.length - 1} more
+                          </span>
+                        )}
+                      </p>
+                      {profileData?.role === "admin" && (
+                        <div className="flex gap-4 items-center">
+                          <button
+                            onClick={() => openDeleteDialogue(item._id)}
+                            className="w-fit pl-1 cursor-pointer text-zinc-500 text-xl"
+                          >
+                            <MdDelete />
                           </button>
-                        </>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                          <>
+                            <button
+                              onClick={() => editProject(item)}
+                              className="w-fit cursor-pointer text-zinc-500 text-xl"
+                            >
+                              <MdEdit />
+                            </button>
+                          </>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
             {projectData?.length > rowsPerPage && (

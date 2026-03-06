@@ -284,7 +284,7 @@ export default function Reports() {
 
           <div className="space-y-8 ">
             <div className="overflow-x-auto">
-              <div className="min-w-4xl  space-y-8 ">
+              <div className="min-w-4xl  space-y-6">
                 <div className="grid grid-cols-7">
                   <h2 className=" text-zinc-700 ml-2 w-full">DATE</h2>
                   <h2 className=" text-zinc-700 w-full">START TIME</h2>
@@ -298,45 +298,47 @@ export default function Reports() {
                 {reportData?.length === 0 && (
                   <div className="">No Data for current Timeline</div>
                 )}
-                {reportData?.map((item, index) => (
-                  <div key={index} className="grid grid-cols-7">
-                    <p className="w-full ml-1  text-zinc-500 text-sm ">
-                      {formattedDate(item.createdAt)}{" "}
-                    </p>
-                    <p className="w-full ml-1 text-zinc-500 text-sm">
-                      {formattedTime(item.start_time)}
-                    </p>
-                    <p className="w-full ml-1 text-zinc-500 text-sm">{`${item.break_duration_in_minutes} min`}</p>
-                    <p className="w-full ml-1 text-zinc-500 text-sm">
-                      {formattedTime(item.end_time)}
-                    </p>
-                    <p className="w-full ml-1 text-zinc-500 text-sm">
-                      {item.working_hours}
-                    </p>
-                    <p className="w-full ml-1 text-zinc-500 text-sm">
-                      {item.total_hours}
-                    </p>
-                    <div className="flex gap-2 items-center">
-                      <button
-                        onClick={() => handleReportDialogue(item._id)}
-                        className="w-fit ml-1 cursor-pointer text-zinc-500 text-xl"
-                      >
-                        <IoEyeOutline />
-                      </button>
-                      {new Date().toDateString() ===
-                        new Date(item?.createdAt).toDateString() && (
-                        <>
-                          <button
-                            onClick={() => handleOpenReportDialogue(item._id)}
-                            className="w-fit ml-1 cursor-pointer text-zinc-500 text-xl"
-                          >
-                            <MdEdit />
-                          </button>
-                        </>
-                      )}
+                <div className="space-y-8">
+                  {reportData?.map((item, index) => (
+                    <div key={index} className="grid grid-cols-7">
+                      <p className="w-full ml-1  text-zinc-500 text-sm ">
+                        {formattedDate(item.createdAt)}{" "}
+                      </p>
+                      <p className="w-full ml-1 text-zinc-500 text-sm">
+                        {formattedTime(item.start_time)}
+                      </p>
+                      <p className="w-full ml-1 text-zinc-500 text-sm">{`${item.break_duration_in_minutes} min`}</p>
+                      <p className="w-full ml-1 text-zinc-500 text-sm">
+                        {formattedTime(item.end_time)}
+                      </p>
+                      <p className="w-full ml-1 text-zinc-500 text-sm">
+                        {item.working_hours}
+                      </p>
+                      <p className="w-full ml-1 text-zinc-500 text-sm">
+                        {item.total_hours}
+                      </p>
+                      <div className="flex gap-2 items-center">
+                        <button
+                          onClick={() => handleReportDialogue(item._id)}
+                          className="w-fit ml-1 cursor-pointer text-zinc-500 text-xl"
+                        >
+                          <IoEyeOutline />
+                        </button>
+                        {new Date().toDateString() ===
+                          new Date(item?.createdAt).toDateString() && (
+                          <>
+                            <button
+                              onClick={() => handleOpenReportDialogue(item._id)}
+                              className="w-fit ml-1 cursor-pointer text-zinc-500 text-xl"
+                            >
+                              <MdEdit />
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           </div>

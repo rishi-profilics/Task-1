@@ -125,7 +125,7 @@ export default function Holidays() {
               </button>
             </div>
             <div className="overflow-x-auto">
-              <div className="min-w-4xl  mb-10 h-80  space-y-8 ">
+              <div className="min-w-4xl  mb-10 h-80  space-y-6 ">
                 <div className="grid grid-cols-5">
                   <h2 className=" text-zinc-700 ml-2 w-full">DATE</h2>
                   <h2 className=" text-zinc-700 w-full">NAME</h2>
@@ -137,38 +137,41 @@ export default function Holidays() {
                 {holidayData?.length === 0 && (
                   <div className="">No holiday available</div>
                 )}
-                {paginatedData?.map((item, index) => (
-                  <div key={index} className="grid grid-cols-5">
-                    <p className="w-full ml-1  text-zinc-500 text-sm ">
-                      {formattedDate(item.event_on)}{" "}
-                    </p>
-                    <p className="w-full ml-1 text-zinc-500 text-sm">
-                      {item.name}
-                    </p>
-                    <p className="w-full ml-1 text-zinc-500 text-sm">
-                      {formattedDate(item.createdAt)}
-                    </p>
-                    <p className="w-full ml-1 text-zinc-500 text-sm">
-                      {formattedDate(item.updatedAt)}
-                    </p>
-                    <div className="flex gap-4 items-center">
-                      <button
-                        onClick={() => deleteHoliday(item._id)}
-                        className="w-fit ml-1 cursor-pointer text-zinc-500 text-xl"
-                      >
-                        <MdDelete />
-                      </button>
-                      <>
+
+                <div className="space-y-8">
+                  {paginatedData?.map((item, index) => (
+                    <div key={index} className="grid grid-cols-5">
+                      <p className="w-full ml-1  text-zinc-500 text-sm ">
+                        {formattedDate(item.event_on)}{" "}
+                      </p>
+                      <p className="w-full ml-1 text-zinc-500 text-sm">
+                        {item.name}
+                      </p>
+                      <p className="w-full ml-1 text-zinc-500 text-sm">
+                        {formattedDate(item.createdAt)}
+                      </p>
+                      <p className="w-full ml-1 text-zinc-500 text-sm">
+                        {formattedDate(item.updatedAt)}
+                      </p>
+                      <div className="flex gap-4 items-center">
                         <button
-                          onClick={() => editHoliday(item)}
-                          className="w-fit cursor-pointer text-zinc-500 text-xl"
+                          onClick={() => deleteHoliday(item._id)}
+                          className="w-fit ml-1 cursor-pointer text-zinc-500 text-xl"
                         >
-                          <MdEdit />
+                          <MdDelete />
                         </button>
-                      </>
+                        <>
+                          <button
+                            onClick={() => editHoliday(item)}
+                            className="w-fit cursor-pointer text-zinc-500 text-xl"
+                          >
+                            <MdEdit />
+                          </button>
+                        </>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
               {holidayData?.length > rowsPerPage && (
                 <div className="flex justify-end mt-6">

@@ -10,6 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
+import { MdDelete, MdEdit } from "react-icons/md";
 
 export default function Todo() {
   const [completeTodoDialogue, setCompleteTodoDialogue] = useState(false);
@@ -17,7 +18,7 @@ export default function Todo() {
   const [todoTaskData, settodoTaskData] = useState(null);
   const [selectedTodo, setselectedTodo] = useState(null);
   const [userData, setUserData] = useState(null);
-  const [handleAddTodoDialogue, setHandleAddTodoDialogue] = useState(false)
+  const [handleAddTodoDialogue, setHandleAddTodoDialogue] = useState(false);
 
   const { fetchProfile, profileData } = useContext(ActivityContext);
 
@@ -75,15 +76,15 @@ export default function Todo() {
 
   const onSubmit = async (data) => {
     try {
-      await axios.post("/api/todo", data)
-      toast.success("Task added successfully")
-      getTodoTask()
-      reset()
-      setHandleAddTodoDialogue(false)
+      await axios.post("/api/todo", data);
+      toast.success("Task added successfully");
+      getTodoTask();
+      reset();
+      setHandleAddTodoDialogue(false);
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
     }
-  }
+  };
 
   useEffect(() => {
     getAllUsersData();
@@ -99,10 +100,17 @@ export default function Todo() {
             !handleAddTodoDialogue && "hidden"
           } bg-black/30 flex items-center mb-0 justify-center p-3`}
         >
-          <form onSubmit={handleSubmit(onSubmit)} className="bg-zinc-100 p-4 rounded-lg w-xl">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="bg-zinc-100 p-4 rounded-lg w-xl"
+          >
             <div className="flex  justify-between">
               <h2 className="text-lg font-normal">Add Task</h2>
-              <button type="button" onClick={() => setHandleAddTodoDialogue(false)} className="p-2 cursor-pointer">
+              <button
+                type="button"
+                onClick={() => setHandleAddTodoDialogue(false)}
+                className="p-2 cursor-pointer"
+              >
                 <IoCloseSharp size={20} />
               </button>
             </div>
@@ -145,7 +153,11 @@ export default function Todo() {
               </div>
               <div className="">
                 <label className="label">Task Priority:</label>
-                <select {...register("priority")} type="text" className="input">
+                <select
+                  {...register("priority")}
+                  type="text"
+                  className="input relative"
+                >
                   <option value="low">Low</option>
                   <option value="medium">Medium</option>
                   <option value="high">High</option>
@@ -166,9 +178,7 @@ export default function Todo() {
                       renderValue={(selected) => {
                         if (selected.length === 0) {
                           return (
-                            <span style={{ color: "#9ca3af" }}>
-                              Assign to
-                            </span>
+                            <span style={{ color: "#9ca3af" }}>Assign to</span>
                           );
                         }
                         return selected
@@ -231,43 +241,83 @@ export default function Todo() {
         </div>
         {profileData?.role === "admin" && (
           <div className="bg-zinc-100  p-4 w-full flex justify-end rounded-lg">
-            <button onClick={() => setHandleAddTodoDialogue(true)} className="button2">Add Task</button>
+            <button
+              onClick={() => setHandleAddTodoDialogue(true)}
+              className="button2"
+            >
+              Add Task
+            </button>
           </div>
         )}
-        <div className="bg-zinc-100 space-y-8 p-4 w-full rounded-lg">
+        <div className="bg-zinc-100 space-y-6 p-4 w-full rounded-lg">
           <div className="grid grid-cols-5">
-            <h2 className=" text-zinc-700 col-span-3  w-full">TASK</h2>
+            <h2 className=" text-zinc-700  w-full">TASK</h2>
             <h2 className=" text-zinc-700 w-full">DUE</h2>
             <h2 className=" text-zinc-700 w-full">PRIORITY</h2>
+            <h2 className=" text-zinc-700 w-full">STATUS</h2>
+            <h2 className=" text-zinc-700 w-full">ACTIONS</h2>
           </div>
           <hr className="text-zinc-300" />
           {todoTaskData?.length === 0 && <p>No task available</p>}
-          {todoTaskData?.map((item) => (
-            <div key={item._id} className="grid grid-cols-5 items-center">
-              <p
-                onClick={(e) => {
-                  handleCompleteTodoDialogue(item._id);
-                }}
-                className="w-full pl-4 col-span-3 text-zinc-500 text-sm flex items-center "
-              >
-                <Checkbox
-                  checked={selectedTodo === item._id && isChecked}
-                  id=""
-                />{" "}
-                {item.task}
-              </p>
-              <p className="w-full  text-zinc-500 text-sm ">
-                {dayjs(item.due).format("MMM DD YYYY")}
-              </p>
-              <p className={`px-4 rounded-sm text-white py-1 ml-1 
-                ${item.priority === "high" && "bg-red-500"} 
-                ${item.priority === "medium" && "bg-orange-400"} 
-                ${item.priority === "low" && "bg-green-400"} 
-                w-fit text-sm `}>
-                {item.priority}
-              </p>
-            </div>
-          ))}
+
+          <div className="space-y-8">
+            {todoTaskData?.map((item) => (
+              <div key={item._id} className="grid grid-cols-5 items-center">
+                <p className="w-full pl-4 text-zinc-500 text-sm flex items-center ">
+                  {item.status === "completed" ? (
+                    <Checkbox checked={true} disabled />
+                  ) : (
+                    <Checkbox
+                      onClick={(e) => {
+                        handleCompleteTodoDialogue(item._id);
+                      }}
+                      checked={selectedTodo === item._id && isChecked}
+                    />
+                  )}
+
+                  {item.task}
+                </p>
+                <p className="w-full  text-zinc-500 text-sm ">
+                  {dayjs(item.due).format("MMM DD YYYY")}
+                </p>
+                <p
+                  className={`px-4 rounded-sm text-white py-1 ml-1 
+                  ${item.priority === "high" && "bg-red-500"} 
+                  ${item.priority === "medium" && "bg-orange-400"} 
+                  ${item.priority === "low" && "bg-blue-400"} 
+                  w-fit text-sm `}
+                >
+                  {item.priority}
+                </p>
+                <p
+                  className={`px-4 rounded-sm text-white py-1 ml-1 
+                  ${item.status === "pending" && "bg-yellow-500"} 
+                  ${item.status === "completed" && "bg-green-400"} 
+                  w-fit text-sm `}
+                >
+                  {item.status}
+                </p>
+                {profileData?.role === "admin" && (
+                  <div className="flex gap-4 items-center">
+                    <button
+                      // onClick={() => openDeleteDialogue(item._id)}
+                      className="w-fit pl-1 cursor-pointer text-zinc-500 text-xl"
+                    >
+                      <MdDelete />
+                    </button>
+                    <>
+                      <button
+                        // onClick={() /=> editProject(item)}
+                        className="w-fit cursor-pointer text-zinc-500 text-xl"
+                      >
+                        <MdEdit />
+                      </button>
+                    </>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
         <div
           className={`fixed inset-0 z-20 ${
