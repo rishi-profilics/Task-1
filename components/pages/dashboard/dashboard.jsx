@@ -581,11 +581,11 @@ export default function Dashboard() {
                         onChange={onChange}
                         MenuProps={{
                           anchorOrigin: {
-                            vertical: "bottom", // attach to top of select
+                            vertical: "bottom", 
                             horizontal: "left",
                           },
                           transformOrigin: {
-                            vertical: "top", // grow from bottom
+                            vertical: "top", 
                             horizontal: "left",
                           },
                           PaperProps: {

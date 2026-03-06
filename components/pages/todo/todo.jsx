@@ -20,6 +20,7 @@ export default function Todo() {
   const [selectedTodo, setselectedTodo] = useState(null);
   const [userData, setUserData] = useState(null);
   const [handleAddTodoDialogue, setHandleAddTodoDialogue] = useState(false);
+  const [deleteTododialogue, setDeleteTododialogue] = useState(false);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const rowsPerPage = 4;
@@ -99,7 +100,29 @@ export default function Todo() {
     }
   };
 
-  useEffect(() => {
+
+  const confirmDeleteTodo = async () => {
+    try {
+      await axios.delete(`/api/todo/${selectedTodo}`)
+      setselectedTodo(null)
+      getTodoTask();
+      setDeleteTododialogue(false)
+      toast.success("Task has been deleted successfully")
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
+
+  const handleDeleteDialogue = (id) => {
+    setselectedTodo(id)
+    setDeleteTododialogue(true)
+  }
+
+  const cancelDeleteTodo = () => {
+    setDeleteTododialogue(false)
+  }
+
+    useEffect(() => {
     getTodoTask();
   }, [search]);
 
@@ -117,6 +140,35 @@ export default function Todo() {
       setPage(totalPages);
     }
   }, [todoTaskData]);
+
+  function DeleteDialogue() {
+    return (
+      <div
+        className={`fixed inset-0 z-20 ${
+          !deleteTododialogue && "hidden"
+        } bg-black/30 flex items-center mb-0 justify-center p-3`}
+      >
+        <div className="bg-zinc-100  rounded-lg w-xl">
+          <div className="flex px-6 py-4 border-b border-zinc-300 justify-between">
+            <h2 className="text-lg">
+              Do you want to delete this task?
+            </h2>
+          </div>
+          <div className="flex items-center gap-3 p-4 justify-end">
+            <button
+              onClick={cancelDeleteTodo}
+              className="button cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button onClick={confirmDeleteTodo} className="button2">
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Layout>
@@ -285,19 +337,26 @@ export default function Todo() {
         <div className="bg-zinc-100 p-4 max-w-290 rounded-lg overflow-x-auto">
           <div className=" min-w-280   min-h-90">
             <div className=" space-y-6  w-full">
-              <div className="grid grid-cols-5">
+              <div
+                className={`grid grid-cols-4 ${profileData?.role === "admin" && "grid-cols-5"}`}
+              >
                 <h2 className=" text-zinc-700  w-full">TASK</h2>
                 <h2 className=" text-zinc-700 w-full">DUE</h2>
                 <h2 className=" text-zinc-700 w-full">PRIORITY</h2>
                 <h2 className=" text-zinc-700 w-full">STATUS</h2>
-                <h2 className=" text-zinc-700 w-full">ACTIONS</h2>
+                {profileData?.role === "admin" && (
+                  <h2 className=" text-zinc-700 w-full">ACTIONS</h2>
+                )}
               </div>
               <hr className="text-zinc-300" />
               {todoTaskData?.length === 0 && <p>No task available</p>}
 
               <div className="space-y-8">
                 {paginatedData?.map((item) => (
-                  <div key={item._id} className="grid grid-cols-5 items-center">
+                  <div
+                    key={item._id}
+                    className={`grid grid-cols-4 ${profileData?.role === "admin" && "grid-cols-5"} items-center`}
+                  >
                     <p className="w-full pl-4 text-zinc-500 text-sm flex items-center ">
                       {item.status === "completed" ? (
                         <Checkbox checked={true} disabled />
@@ -335,7 +394,7 @@ export default function Todo() {
                     {profileData?.role === "admin" && (
                       <div className="flex gap-4 items-center">
                         <button
-                          // onClick={() => openDeleteDialogue(item._id)}
+                          onClick={() => handleDeleteDialogue(item._id)}
                           className="w-fit pl-1 cursor-pointer text-zinc-500 text-xl"
                         >
                           <MdDelete />
@@ -353,18 +412,19 @@ export default function Todo() {
                   </div>
                 ))}
               </div>
+              <DeleteDialogue />
             </div>
           </div>
-        {todoTaskData?.length > rowsPerPage && (
-          <div className="flex justify-end mt-6">
-            <Pagination
-              count={Math.ceil(todoTaskData.length / rowsPerPage)}
-              page={page}
-              shape="rounded"
-              onChange={(event, value) => setPage(value)}
-            />
-          </div>
-        )}
+          {todoTaskData?.length > rowsPerPage && (
+            <div className="flex justify-end mt-6">
+              <Pagination
+                count={Math.ceil(todoTaskData.length / rowsPerPage)}
+                page={page}
+                shape="rounded"
+                onChange={(event, value) => setPage(value)}
+              />
+            </div>
+          )}
         </div>
 
         <div
@@ -395,4 +455,3 @@ export default function Todo() {
     </Layout>
   );
 }
-
