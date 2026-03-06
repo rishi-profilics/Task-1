@@ -11,6 +11,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
 import { MdDelete, MdEdit } from "react-icons/md";
+import Pagination from "@mui/material/Pagination";
 
 export default function Todo() {
   const [completeTodoDialogue, setCompleteTodoDialogue] = useState(false);
@@ -19,6 +20,9 @@ export default function Todo() {
   const [selectedTodo, setselectedTodo] = useState(null);
   const [userData, setUserData] = useState(null);
   const [handleAddTodoDialogue, setHandleAddTodoDialogue] = useState(false);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 4;
 
   const { fetchProfile, profileData } = useContext(ActivityContext);
 
@@ -30,9 +34,18 @@ export default function Todo() {
     control,
   } = useForm();
 
+  const paginatedData = todoTaskData?.slice(
+    (page - 1) * rowsPerPage,
+    page * rowsPerPage,
+  );
+
   const getTodoTask = async () => {
     try {
-      const data = await axios.get("/api/todo");
+      const data = await axios.get("/api/todo", {
+        params: {
+          search: search.trim(),
+        },
+      });
       settodoTaskData(data.data.data);
       console.log(data.data.data);
     } catch (error) {
@@ -87,10 +100,23 @@ export default function Todo() {
   };
 
   useEffect(() => {
+    getTodoTask();
+  }, [search]);
+
+  useEffect(() => {
     getAllUsersData();
     fetchProfile();
-    getTodoTask();
   }, []);
+
+  useEffect(() => {
+    if (!todoTaskData) return;
+
+    const totalPages = Math.ceil(todoTaskData.length / rowsPerPage);
+
+    if (page > totalPages && totalPages > 0) {
+      setPage(totalPages);
+    }
+  }, [todoTaskData]);
 
   return (
     <Layout>
@@ -240,7 +266,14 @@ export default function Todo() {
           </form>
         </div>
         {profileData?.role === "admin" && (
-          <div className="bg-zinc-100  p-4 w-full flex justify-end rounded-lg">
+          <div className="bg-zinc-100  p-4 w-full flex justify-between rounded-lg">
+            <input
+              type="text"
+              className="input w-xs!"
+              placeholder="Search Task..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
             <button
               onClick={() => setHandleAddTodoDialogue(true)}
               className="button2"
@@ -249,76 +282,91 @@ export default function Todo() {
             </button>
           </div>
         )}
-        <div className="bg-zinc-100 space-y-6 p-4 w-full rounded-lg">
-          <div className="grid grid-cols-5">
-            <h2 className=" text-zinc-700  w-full">TASK</h2>
-            <h2 className=" text-zinc-700 w-full">DUE</h2>
-            <h2 className=" text-zinc-700 w-full">PRIORITY</h2>
-            <h2 className=" text-zinc-700 w-full">STATUS</h2>
-            <h2 className=" text-zinc-700 w-full">ACTIONS</h2>
-          </div>
-          <hr className="text-zinc-300" />
-          {todoTaskData?.length === 0 && <p>No task available</p>}
+        <div className="bg-zinc-100 p-4 max-w-290 rounded-lg overflow-x-auto">
+          <div className=" min-w-280   min-h-90">
+            <div className=" space-y-6  w-full">
+              <div className="grid grid-cols-5">
+                <h2 className=" text-zinc-700  w-full">TASK</h2>
+                <h2 className=" text-zinc-700 w-full">DUE</h2>
+                <h2 className=" text-zinc-700 w-full">PRIORITY</h2>
+                <h2 className=" text-zinc-700 w-full">STATUS</h2>
+                <h2 className=" text-zinc-700 w-full">ACTIONS</h2>
+              </div>
+              <hr className="text-zinc-300" />
+              {todoTaskData?.length === 0 && <p>No task available</p>}
 
-          <div className="space-y-8">
-            {todoTaskData?.map((item) => (
-              <div key={item._id} className="grid grid-cols-5 items-center">
-                <p className="w-full pl-4 text-zinc-500 text-sm flex items-center ">
-                  {item.status === "completed" ? (
-                    <Checkbox checked={true} disabled />
-                  ) : (
-                    <Checkbox
-                      onClick={(e) => {
-                        handleCompleteTodoDialogue(item._id);
-                      }}
-                      checked={selectedTodo === item._id && isChecked}
-                    />
-                  )}
+              <div className="space-y-8">
+                {paginatedData?.map((item) => (
+                  <div key={item._id} className="grid grid-cols-5 items-center">
+                    <p className="w-full pl-4 text-zinc-500 text-sm flex items-center ">
+                      {item.status === "completed" ? (
+                        <Checkbox checked={true} disabled />
+                      ) : (
+                        <Checkbox
+                          onClick={(e) => {
+                            handleCompleteTodoDialogue(item._id);
+                          }}
+                          checked={selectedTodo === item._id && isChecked}
+                        />
+                      )}
 
-                  {item.task}
-                </p>
-                <p className="w-full  text-zinc-500 text-sm ">
-                  {dayjs(item.due).format("MMM DD YYYY")}
-                </p>
-                <p
-                  className={`px-4 rounded-sm text-white py-1 ml-1 
+                      {item.task}
+                    </p>
+                    <p className="w-full  text-zinc-500 text-sm ">
+                      {dayjs(item.due).format("MMM DD YYYY")}
+                    </p>
+                    <p
+                      className={`px-4 rounded-sm text-white py-1 ml-1 
                   ${item.priority === "high" && "bg-red-500"} 
                   ${item.priority === "medium" && "bg-orange-400"} 
                   ${item.priority === "low" && "bg-blue-400"} 
                   w-fit text-sm `}
-                >
-                  {item.priority}
-                </p>
-                <p
-                  className={`px-4 rounded-sm text-white py-1 ml-1 
+                    >
+                      {item.priority}
+                    </p>
+                    <p
+                      className={`px-4 rounded-sm text-white py-1 ml-1 
                   ${item.status === "pending" && "bg-yellow-500"} 
                   ${item.status === "completed" && "bg-green-400"} 
                   w-fit text-sm `}
-                >
-                  {item.status}
-                </p>
-                {profileData?.role === "admin" && (
-                  <div className="flex gap-4 items-center">
-                    <button
-                      // onClick={() => openDeleteDialogue(item._id)}
-                      className="w-fit pl-1 cursor-pointer text-zinc-500 text-xl"
                     >
-                      <MdDelete />
-                    </button>
-                    <>
-                      <button
-                        // onClick={() /=> editProject(item)}
-                        className="w-fit cursor-pointer text-zinc-500 text-xl"
-                      >
-                        <MdEdit />
-                      </button>
-                    </>
+                      {item.status}
+                    </p>
+                    {profileData?.role === "admin" && (
+                      <div className="flex gap-4 items-center">
+                        <button
+                          // onClick={() => openDeleteDialogue(item._id)}
+                          className="w-fit pl-1 cursor-pointer text-zinc-500 text-xl"
+                        >
+                          <MdDelete />
+                        </button>
+                        <>
+                          <button
+                            // onClick={() /=> editProject(item)}
+                            className="w-fit cursor-pointer text-zinc-500 text-xl"
+                          >
+                            <MdEdit />
+                          </button>
+                        </>
+                      </div>
+                    )}
                   </div>
-                )}
+                ))}
               </div>
-            ))}
+            </div>
           </div>
+        {todoTaskData?.length > rowsPerPage && (
+          <div className="flex justify-end mt-6">
+            <Pagination
+              count={Math.ceil(todoTaskData.length / rowsPerPage)}
+              page={page}
+              shape="rounded"
+              onChange={(event, value) => setPage(value)}
+            />
+          </div>
+        )}
         </div>
+
         <div
           className={`fixed inset-0 z-20 ${
             !completeTodoDialogue && "hidden"
@@ -348,4 +396,3 @@ export default function Todo() {
   );
 }
 
-// todo fetch all teh users from teh backend and display it in the select field and send that data to add task
