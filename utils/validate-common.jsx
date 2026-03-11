@@ -12,13 +12,17 @@ export const textMinLength3Rule = (fieldName = 'Text') => ({
 });
 
 const isNumericPhone = (value) => {
-  if (!value) return true;
-  return /^\d+$/.test(value) || 'Phone number must contain only numbers';
+  if (/^\d+$/.test(value)){
+    return true;
+  } 
+  return 'Phone number must contain only numbers';
 };
 
 const isTenDigitPhone = (value) => {
-  if (!value) return true;
-  return value.length === 10 || 'Phone must be 10 digits';
+  if (value.length !== 10){
+    return 'Phone must be 10 digits';
+  }
+  return true;
 };
 
 export const requiredPhoneValidationRule = {
