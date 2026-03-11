@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { IoCloseSharp } from "react-icons/io5";
 import EventCalender from "../calender/event_calender";
 import dayjs from "dayjs";
+import { textMinLength3Rule } from "../../../utils/validate-common";
 
 export default function Events() {
   const currentYear = new Date().getFullYear();
@@ -31,10 +32,10 @@ export default function Events() {
 
   const fetchEvents = async () => {
     try {
-      const res = await axios.get("/events",{
-        params:{
-          event_type: "event"
-        }
+      const res = await axios.get("/events", {
+        params: {
+          event_type: "event",
+        },
       });
       seteventData(res.data.data);
     } catch (error) {
@@ -44,7 +45,7 @@ export default function Events() {
 
   const onSubmit = async (data) => {
     try {
-      await axios.post("/events", {...data, event_type:"event"});
+      await axios.post("/events", { ...data, event_type: "event" });
       toast.success("Event Added");
       setHandleDialogue(false);
       reset();
@@ -105,19 +106,29 @@ export default function Events() {
                     <div className="">
                       <label className="label">Event Name:</label>
                       <input
-                        {...register("name")}
+                        {...register("name", textMinLength3Rule("Event Name"))}
                         type="text"
                         placeholder="Event name"
                         className="input"
                       />
+                      {errors.name && (
+                        <p className="text-red-600 mt-1 text-xs">
+                          {errors.name.message}
+                        </p>
+                      )}
                     </div>
                     <div className="">
                       <label className="label">Event On:</label>
                       <input
-                        {...register("event_on")}
+                        {...register("event_on", {required:"Evnet date is required"})}
                         type="date"
                         className="input"
                       />
+                      {errors.event_on && (
+                    <p className="text-red-600 mt-1 text-xs">
+                      {errors.event_on.message}
+                    </p>
+                  )}
                     </div>
                     <div className="flex justify-end mt-8">
                       <button className="button2" type="submit">
@@ -159,7 +170,11 @@ export default function Events() {
               </select>
             </div>
             {calenderFilter === "event" && (
-              <EventCalender selectedYear={selectedYear} eventData={eventData}  setSelectedYear={setSelectedYear}/>
+              <EventCalender
+                selectedYear={selectedYear}
+                eventData={eventData}
+                setSelectedYear={setSelectedYear}
+              />
             )}
             {calenderFilter === "report" && (
               <Calender selectedYear={selectedYear} />

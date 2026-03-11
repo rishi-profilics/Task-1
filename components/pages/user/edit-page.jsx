@@ -1,12 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Layout from "../../ui/layout";
 import { useForm } from "react-hook-form";
 import axios from "../../../utils/axios";
 import Tab from "../../ui/tab";
+import { emailValidationRule } from "../../../utils/validate-common";
+import {
+  optionalPhoneValidationRule,
+  requiredPhoneValidationRule,
+  textMinLength3Rule,
+} from "../../../utils/validate-common";
 // import { formattedDate } from "../../../utils/format-date";
 import { toast } from "react-toastify";
 import { formattedInputDate } from "../../../utils/formate-input-date";
 import UserDetailCard from "../../ui/user-detail-card";
+import ActivityContext from "../../../src/context/activity-context";
 
 export default function EditPage() {
   const [userDetail, setUserDetail] = useState(null);
@@ -30,28 +37,27 @@ export default function EditPage() {
       gender: "",
     },
   });
+    const {  profileData } = useContext(ActivityContext);
 
-  const fetchProfile = async () => {
-    const user = await axios.get("/profile");
-    const userData = user.data.data;
 
-    setValue("firstName", userData.firstName);
-    setValue("lastName", userData.lastName);
-    setValue("email", userData.email);
-    setValue("gender", userData.gender);
-    setValue("dob", formattedInputDate(userData.dob));
-    setValue("department", userData.department);
-    setValue("joiningdate", formattedInputDate(userData.joiningdate));
-    setValue("mobile1", userData.mobile1);
-    setValue("address", userData.address);
-    setValue("skills.frontend", userData.skills?.frontend);
-    setValue("skills.backend", userData.skills?.backend);
-    setValue("aboutme", userData.aboutme);
-  };
+    useEffect(() => {
+      setValue("firstName", profileData?.firstName);
+      setValue("lastName", profileData?.lastName);
+      setValue("email", profileData?.email);
+      setValue("gender", profileData?.gender);
+      setValue("dob", formattedInputDate(profileData?.dob));
+      setValue("department", profileData?.department);
+      setValue("joiningdate", formattedInputDate(profileData?.joiningdate));
+      setValue("mobile1", profileData?.mobile1);
+      setValue("address", profileData?.address);
+      setValue("skills.frontend", profileData?.skills?.frontend);
+      setValue("skills.backend", profileData?.skills?.backend);
+      setValue("aboutme", profileData?.aboutme);
+      
+    }, []);
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
+
+
 
   const onSubmit = async (data) => {
     await axios.put("/profile", data);
@@ -79,13 +85,7 @@ export default function EditPage() {
             <div className="col-span-6 md:col-span-3">
               <label className="font-semibold text-gray-700">First Name</label>
               <input
-                {...register("firstName", {
-                  required: "Name is required",
-                  minLength: {
-                    value: 3,
-                    message: "Should contain atleast 3 characters",
-                  },
-                })}
+                {...register("firstName", textMinLength3Rule("First Name"))}
                 type="text"
                 className="input"
                 placeholder="First Name"
@@ -112,13 +112,7 @@ export default function EditPage() {
                 Email Address
               </label>
               <input
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: "Enter valid email",
-                  },
-                })}
+                {...register("email", emailValidationRule)}
                 type="text"
                 className="input"
                 placeholder="Email Address"
@@ -198,14 +192,8 @@ export default function EditPage() {
                 Mobile no. 1
               </label>
               <input
-                {...register("mobile1", {
-                  required: "Mobile number is required",
-                  pattern: {
-                    value: /^[6-9]\d{9}$/,
-                    message: "Enter valid 10-digit mobile number",
-                  },
-                })}
-                type="text"
+                {...register("mobile1", requiredPhoneValidationRule)}
+                type="tel"
                 className="input"
                 placeholder="Mobile no. 1"
               />
@@ -219,8 +207,8 @@ export default function EditPage() {
                 Mobile no. 2
               </label>
               <input
-                {...register("mobile2")}
-                type="number"
+                {...register("mobile2", optionalPhoneValidationRule)}
+                type="tel"
                 className="input"
                 placeholder="Mobile no. 2"
               />

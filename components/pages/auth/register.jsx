@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PiFinnTheHumanFill } from "react-icons/pi";
 import { Link, useNavigate } from "react-router-dom";
+import { textMinLength3Rule, emailValidationRule } from "../../../utils/validate-common";
 
 export default function Register() {
   const [serverError, setServerError] = useState("");
@@ -48,13 +49,7 @@ export default function Register() {
         <div className="flex gap-3">
           <div>
             <input
-              {...register("firstName", {
-                required: "Name is required",
-                minLength: {
-                  value: 3,
-                  message: "Should contain atleast 3 characters",
-                },
-              })}
+              {...register("firstName", textMinLength3Rule("Name"))}
               type="text"
               className="input"
               placeholder="First Name"
@@ -75,13 +70,7 @@ export default function Register() {
         </div>
 
         <input
-          {...register("email", {
-            required: "Email is required",
-            pattern: {
-              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              message: "Enter valid email",
-            },
-          })}
+          {...register("email", emailValidationRule)}
           type="text"
           className="input"
           placeholder="Email Address"

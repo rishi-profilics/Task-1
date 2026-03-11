@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PiFinnTheHumanFill } from "react-icons/pi";
 import { Link, useNavigate } from "react-router-dom";
+import { emailValidationRule } from "../../../utils/validate-common";
 
 export default function Login() {
   const [serverError, setServerError] = useState("");
@@ -50,13 +51,7 @@ export default function Login() {
         <h2 className="mb-4">LOGIN TO YOUR ACCOUNT</h2>
 
         <input
-          {...register("email", {
-            required: "Email is required",
-            pattern: {
-              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              message: "Enter valid email",
-            },
-          })}
+          {...register("email", emailValidationRule)}
           type="text"
           className="input"
           placeholder="Email Address"

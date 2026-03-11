@@ -23,20 +23,12 @@ export default function TimelineActivities() {
     formState: { errors: dateError },
   } = useForm();
 
-  const [userData, setUserData] = useState([]);
   const [isDialogueOpen, setIsDialogueOpen] = useState(false);
 
-  const { filterDateData, punchData, checkPunch,  profileImage } = useContext(ActivityContext);
+  const { filterDateData, punchData, checkPunch,  profileImage,  profileData} = useContext(ActivityContext);
 
     const {pathname} = useLocation()
 
-  const fetchProfile = async () => {
-    const user = await axios.get("/profile");
-    const userData = user.data.data;
-    // console.log(userData);
-
-    setUserData(userData);
-  };
 
   const handleBreak = (data) => {
     const addBreak = async () => {
@@ -155,9 +147,7 @@ export default function TimelineActivities() {
     dateValue("toDate", today);
   }, []);
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
+
   return (
       <div className=" space-y-6">
         <div className="bg-zinc-100 p-4 w-full gap-4 flex max-md:flex-col md:items-end justify-between rounded-lg">
@@ -225,7 +215,7 @@ export default function TimelineActivities() {
           <div className="h-px  w-full bg-zinc-300" />
 
           {punchData?.length === 0 && (
-            <div className="">No Data for current Timeline</div>
+            <div className="text-center text-lg text-zinc-600">No Data for current Timeline</div>
           )}
 
           {punchData?.map((item, index) => (
@@ -245,7 +235,7 @@ export default function TimelineActivities() {
                 </div>
                 <div className="flex flex-col">
                   <h3 className="text-zinc-500 font-semibold ">
-                    {userData.firstName + " " + userData.lastName}
+                    {profileData.firstName + " " + profileData.lastName}
                   </h3>
                   {item.activity_type === "break_in" && (
                     <h4 className="text-zinc-400 text-sm">

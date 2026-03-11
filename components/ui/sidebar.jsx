@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { FaRocket } from "react-icons/fa";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { FiArrowRight } from "react-icons/fi";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
 import { Link, useLocation } from "react-router-dom";
+import ActivityContext from "../../src/context/activity-context";
 
 export default function Sidebar() {
+  const {  profileData, } = useContext(ActivityContext);
   const tabs = [
     // { name: "HRMS", link: "/hrms" },
     { name: "Dashboard", link: "/dashboard" },
@@ -23,6 +25,7 @@ export default function Sidebar() {
 
   const {pathname} = useLocation()
 
+
   return (
     <div
       className={`z-10 top-0 left-0 w-80 sticky h-screen  max-xl:hidden  overflow-y-auto p-6 bg-zinc-100 shadow-xl`}
@@ -34,16 +37,22 @@ export default function Sidebar() {
       </div>
       <div className="space-y-4">
         <button aria-disabled className="flex items-center gap-3 text-zinc-600"><FaRocket /> HRMS</button>
-        {tabs.map((item, index) => (
-          <Link
-            to={item.link}
-            key={index}
-            className="flex items-center gap-3 text-zinc-600"
-          >
-            {pathname === item.link ? <FaArrowRightLong size={18} /> : <BsThreeDots size={18}/>}
-             {item.name}
-          </Link>
-        ))}
+        {profileData && tabs.map((item, index) => {
+          if (item.name === "Referral" && profileData.role === "admin") {
+            return null;
+          }
+          
+          return (
+            <Link
+              to={item.link}
+              key={index}
+              className="flex items-center gap-3 text-zinc-600"
+            >
+              {pathname === item.link ? <FaArrowRightLong size={18} /> : <BsThreeDots size={18}/>}
+               {item.name}
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

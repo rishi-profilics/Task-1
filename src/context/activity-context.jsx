@@ -1,5 +1,5 @@
 import axios from "../../utils/axios";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 const ActivityContext = createContext(null);
 
@@ -44,13 +44,16 @@ export const ActivityProvider = ({ children }) => {
     setProfileData(images.data?.data);
   };
 
+  useEffect(() => {
+    fetchProfile()
+  }, []);
+
   return (
     <ActivityContext.Provider
       value={{
         punchData,
         setPunchData,
         checkPunch,
-        fetchProfile,
         profileData,
         filterDateData,
         fetchGalleryImage,

@@ -16,7 +16,7 @@ export default function UserDetailCard({ userDetail }) {
   const [openImageDialogue, setOpenImageDialogue] = useState(false);
   const cropperRef = useRef(null);
   const fileInputRef = useRef(null);
-  const { fetchGalleryImage: profileImage}  = useContext(ActivityContext)
+  const { fetchGalleryImage: profileImage, profileData: userData}  = useContext(ActivityContext)
   const [profileData, setProfileData] = useState({
     firstName: "",
     lastName: "",
@@ -34,14 +34,12 @@ export default function UserDetailCard({ userDetail }) {
     clearErrors,
   } = useForm();
 
-  const fetchProfile = async () => {
-    const user = await axios.get("/profile");
-    const userData = user.data.data;
+  const fetchProfileData = async () => {
     setProfileData((prev) => ({
       ...prev,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      aboutme: userData.aboutme,
+      firstName: userData?.firstName || "",
+      lastName: userData?.lastName || "",
+      aboutme: userData?.aboutme || "",
     }));
   };
 
@@ -108,9 +106,11 @@ export default function UserDetailCard({ userDetail }) {
   };
 
   useEffect(() => {
-    fetchProfile();
+    fetchProfileData();
     fetchGalleryImage();
-  }, [userDetail]);
+  }, [userDetail, userData]);
+
+  const fullName = `${profileData?.firstName || ""} ${profileData?.lastName || ""}`.trim();
 
   return (
     <div className="bg-zinc-100 w-full flex flex-col justify-center gap-3 py-10 items-center rounded-lg ">
@@ -253,7 +253,7 @@ export default function UserDetailCard({ userDetail }) {
           />
         </div>
       </div>
-      <h1 className="text-3xl">{`${profileData?.firstName} ${profileData?.lastName}`}</h1>
+      <h1 className="text-3xl">{fullName}</h1>
       <p className="text-lg text-zinc-600">{profileData?.aboutme}</p>
     </div>
   );

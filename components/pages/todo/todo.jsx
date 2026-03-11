@@ -12,6 +12,7 @@ import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
 import { MdDelete, MdEdit } from "react-icons/md";
 import Pagination from "@mui/material/Pagination";
+import { textMinLength3Rule } from "../../../utils/validate-common";
 
 export default function Todo() {
   const [completeTodoDialogue, setCompleteTodoDialogue] = useState(false);
@@ -21,11 +22,13 @@ export default function Todo() {
   const [userData, setUserData] = useState(null);
   const [handleAddTodoDialogue, setHandleAddTodoDialogue] = useState(false);
   const [deleteTododialogue, setDeleteTododialogue] = useState(false);
+  const [isEditingTodo, setIsEditingTodo] = useState(false);
+  const [priority, setPriority] = useState("")
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const rowsPerPage = 4;
 
-  const { fetchProfile, profileData } = useContext(ActivityContext);
+  const {  profileData } = useContext(ActivityContext);
 
   const {
     register,
@@ -45,6 +48,7 @@ export default function Todo() {
       const data = await axios.get("/api/todo", {
         params: {
           search: search.trim(),
+          sort: priority
         },
       });
       settodoTaskData(data.data.data);
@@ -90,45 +94,74 @@ export default function Todo() {
 
   const onSubmit = async (data) => {
     try {
-      await axios.post("/api/todo", data);
-      toast.success("Task added successfully");
+      if (isEditingTodo && selectedTodo) {
+        await axios.put(`/api/todo/update/${selectedTodo}`, data);
+        toast.success("Task updated successfully");
+      } else {
+        await axios.post("/api/todo", data);
+        toast.success("Task added successfully");
+      }
       getTodoTask();
       reset();
       setHandleAddTodoDialogue(false);
+      setIsEditingTodo(false);
+      setselectedTodo(null);
     } catch (error) {
       console.log(error.message);
     }
   };
 
+  const handleOpenAddTodo = () => {
+    setIsEditingTodo(false);
+    setselectedTodo(null);
+    reset({
+      task: "",
+      due: "",
+      priority: 1,
+      assignedto: [],
+    });
+    setHandleAddTodoDialogue(true);
+  };
+
+  const handleEditTodoDialogue = (item) => {
+    setIsEditingTodo(true);
+    setselectedTodo(item._id);
+    reset({
+      task: item.task || "",
+      due: item.due ? dayjs(item.due).format("YYYY-MM-DD") : "",
+      priority: item.priority || 1,
+      assignedto: item.assignedto || [],
+    });
+    setHandleAddTodoDialogue(true);
+  };
 
   const confirmDeleteTodo = async () => {
     try {
-      await axios.delete(`/api/todo/${selectedTodo}`)
-      setselectedTodo(null)
+      await axios.delete(`/api/todo/${selectedTodo}`);
+      setselectedTodo(null);
       getTodoTask();
-      setDeleteTododialogue(false)
-      toast.success("Task has been deleted successfully")
+      setDeleteTododialogue(false);
+      toast.success("Task has been deleted successfully");
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
     }
-  }
+  };
 
   const handleDeleteDialogue = (id) => {
-    setselectedTodo(id)
-    setDeleteTododialogue(true)
-  }
+    setselectedTodo(id);
+    setDeleteTododialogue(true);
+  };
 
   const cancelDeleteTodo = () => {
-    setDeleteTododialogue(false)
-  }
+    setDeleteTododialogue(false);
+  };
 
-    useEffect(() => {
+  useEffect(() => {
     getTodoTask();
-  }, [search]);
+  }, [search, priority]);
 
   useEffect(() => {
     getAllUsersData();
-    fetchProfile();
   }, []);
 
   useEffect(() => {
@@ -150,9 +183,7 @@ export default function Todo() {
       >
         <div className="bg-zinc-100  rounded-lg w-xl">
           <div className="flex px-6 py-4 border-b border-zinc-300 justify-between">
-            <h2 className="text-lg">
-              Do you want to delete this task?
-            </h2>
+            <h2 className="text-lg">Do you want to delete this task?</h2>
           </div>
           <div className="flex items-center gap-3 p-4 justify-end">
             <button
@@ -183,10 +214,16 @@ export default function Todo() {
             className="bg-zinc-100 p-4 rounded-lg w-xl"
           >
             <div className="flex  justify-between">
-              <h2 className="text-lg font-normal">Add Task</h2>
+              <h2 className="text-lg font-normal">
+                {isEditingTodo ? "Edit Task" : "Add Task"}
+              </h2>
               <button
                 type="button"
-                onClick={() => setHandleAddTodoDialogue(false)}
+                onClick={() => {
+                  setHandleAddTodoDialogue(false);
+                  setIsEditingTodo(false);
+                  setselectedTodo(null);
+                }}
                 className="p-2 cursor-pointer"
               >
                 <IoCloseSharp size={20} />
@@ -196,13 +233,7 @@ export default function Todo() {
               <div className="">
                 <label className="label">Task Name:</label>
                 <input
-                  {...register("task", {
-                    required: "Task Name is Required",
-                    minLength: {
-                      value: 5,
-                      message: "Username must be at least 5 characters long",
-                    },
-                  })}
+                  {...register("task", textMinLength3Rule("Task Name"))}
                   type="text"
                   placeholder="Task Name"
                   className="input"
@@ -236,9 +267,9 @@ export default function Todo() {
                   type="text"
                   className="input relative"
                 >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
+                  <option value={1}>Low</option>
+                  <option value={2}>Medium</option>
+                  <option value={3}>High</option>
                 </select>
               </div>
               <div>
@@ -312,12 +343,12 @@ export default function Todo() {
             </div>
             <div className="flex justify-end mt-8">
               <button className="button2" type="submit">
-                Submit
+                {isEditingTodo ? "Update" : "Submit"}
               </button>
             </div>
           </form>
         </div>
-        {profileData?.role === "admin" && (
+      
           <div className="bg-zinc-100  p-4 w-full flex justify-between rounded-lg">
             <input
               type="text"
@@ -326,19 +357,29 @@ export default function Todo() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <button
-              onClick={() => setHandleAddTodoDialogue(true)}
-              className="button2"
-            >
-              Add Task
-            </button>
+
+            <div className="flex gap-3 items-center">
+              <select onChange={(e) => setPriority(e.target.value)} className="input w-60! mt-0!">
+                <option value="">None</option>
+                <option value="low">Low to high</option>
+                <option value="high">High to low</option>
+                <option value="complete">Complete</option>
+                <option value="pending">Pending</option>
+              </select>
+              {profileData?.role === "admin" && (
+
+                <button onClick={handleOpenAddTodo} className="button2 whitespace-nowrap">
+                Add Task
+              </button>
+              )}
+            </div>
           </div>
-        )}
+
         <div className="bg-zinc-100 p-4 max-w-290 rounded-lg overflow-x-auto">
           <div className=" min-w-280   min-h-90">
             <div className=" space-y-6  w-full">
               <div
-                className={`grid grid-cols-4 ${profileData?.role === "admin" && "grid-cols-5"}`}
+                className={`grid grid-cols-4 w-full ${profileData?.role === "admin" && "grid-cols-5"}`}
               >
                 <h2 className=" text-zinc-700  w-full">TASK</h2>
                 <h2 className=" text-zinc-700 w-full">DUE</h2>
@@ -349,13 +390,13 @@ export default function Todo() {
                 )}
               </div>
               <hr className="text-zinc-300" />
-              {todoTaskData?.length === 0 && <p>No task available</p>}
+              {todoTaskData?.length === 0 && <p className="text-center text-lg text-zinc-600">No task available</p>}
 
-              <div className="space-y-8">
+              <div className="space-y-6">
                 {paginatedData?.map((item) => (
                   <div
                     key={item._id}
-                    className={`grid grid-cols-4 ${profileData?.role === "admin" && "grid-cols-5"} items-center`}
+                    className={`grid grid-cols-4 w-full ${profileData?.role === "admin" && "grid-cols-5"} items-center`}
                   >
                     <p className="w-full pl-4 text-zinc-500 text-sm flex items-center ">
                       {item.status === "completed" ? (
@@ -375,16 +416,18 @@ export default function Todo() {
                       {dayjs(item.due).format("MMM DD YYYY")}
                     </p>
                     <p
-                      className={`px-4 rounded-sm text-white py-1 ml-1 
-                  ${item.priority === "high" && "bg-red-500"} 
-                  ${item.priority === "medium" && "bg-orange-400"} 
-                  ${item.priority === "low" && "bg-blue-400"} 
+                      className={`px-4 capitalize rounded-sm text-white py-1 ml-1 
+                  ${item.priority === 3 && "bg-red-500"} 
+                  ${item.priority === 2 && "bg-orange-400"} 
+                  ${item.priority === 1 && "bg-blue-400"} 
                   w-fit text-sm `}
                     >
-                      {item.priority}
+                      {item.priority === 1 && "Low"}
+                      {item.priority === 2 && "Medium"}
+                      {item.priority === 3 && "High"}
                     </p>
                     <p
-                      className={`px-4 rounded-sm text-white py-1 ml-1 
+                      className={`px-4 capitalize rounded-sm text-white py-1 ml-1 
                   ${item.status === "pending" && "bg-yellow-500"} 
                   ${item.status === "completed" && "bg-green-400"} 
                   w-fit text-sm `}
@@ -400,12 +443,14 @@ export default function Todo() {
                           <MdDelete />
                         </button>
                         <>
-                          <button
-                            // onClick={() /=> editProject(item)}
-                            className="w-fit cursor-pointer text-zinc-500 text-xl"
-                          >
-                            <MdEdit />
-                          </button>
+                          {item.status !== "completed" && (
+                            <button
+                              onClick={() => handleEditTodoDialogue(item)}
+                              className="w-fit cursor-pointer text-zinc-500 text-xl"
+                            >
+                              <MdEdit />
+                            </button>
+                          )}
                         </>
                       </div>
                     )}

@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import Pagination from "@mui/material/Pagination";
 
 import { MdDelete, MdEdit } from "react-icons/md";
+import { textMinLength3Rule } from "../../../utils/validate-common";
 
 export default function Holidays() {
   const [handleDialogue, setHandleDialogue] = useState(false);
@@ -135,7 +136,7 @@ export default function Holidays() {
                 </div>
                 <hr className="text-zinc-300" />
                 {holidayData?.length === 0 && (
-                  <div className="">No holiday available</div>
+                  <div className="text-center text-lg text-zinc-600">No holiday available</div>
                 )}
 
                 <div className="space-y-8">
@@ -203,11 +204,9 @@ export default function Holidays() {
               </div>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="">
-                  <label className="label">Event Name:</label>
+                  <label className="label">Holiday Name:</label>
                   <input
-                    {...register("name", {
-                      required: "Event Name is Required",
-                    })}
+                    {...register("name", textMinLength3Rule("Holiday Name"))}
                     type="text"
                     placeholder="Event name"
                     className="input"

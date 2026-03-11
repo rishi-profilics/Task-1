@@ -296,7 +296,7 @@ export default function Reports() {
                 </div>
                 <hr className="text-zinc-300" />
                 {reportData?.length === 0 && (
-                  <div className="">No Data for current Timeline</div>
+                  <div className="text-center text-lg text-zinc-600">No Data for current Timeline</div>
                 )}
                 <div className="space-y-8">
                   {reportData?.map((item, index) => (

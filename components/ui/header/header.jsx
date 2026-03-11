@@ -294,7 +294,7 @@ export default function Header() {
   }
 
   return (
-    <div className="w-full pt-6 px-6 flex items-center justify-between">
+    <div className="w-full pt-6 px-6 mb-10 flex items-center justify-between">
       <DailyReport />
       <div className="flex items-center gap-4">
         <h1 className="text-xl text-zinc-600 font-semibold">

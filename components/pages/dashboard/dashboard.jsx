@@ -14,6 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
 import Checkbox from "@mui/material/Checkbox";
 import ActivityContext from "../../../src/context/activity-context";
+import { textMinLength3Rule } from "c:/Users/rishi/OneDrive/Desktop/frontend/utils/validate-common";
 
 export default function Dashboard() {
   const [projectData, setProjectData] = useState(null);
@@ -35,7 +36,7 @@ export default function Dashboard() {
   const [page, setPage] = useState(1);
   const rowsPerPage = 4;
 
-  const { fetchProfile, profileData } = useContext(ActivityContext);
+  const {  profileData } = useContext(ActivityContext);
 
   const {
     register,
@@ -253,7 +254,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     getAllUsersData();
-    fetchProfile();
     getProjectData({ fromDate: today, toDate: today });
     dateValue("fromDate", today);
     dateValue("toDate", today);
@@ -458,19 +458,7 @@ export default function Dashboard() {
                 <div className="">
                   <label className="label">Project Name:</label>
                   <input
-                    {...register("projectname", {
-                      required: "Project Name is Required",
-                      minLength: {
-                        value: 3,
-                        message: "Must be at least 3 characters long",
-                      },
-                      validate: (value) => {
-                        if (!value.trim()) return "Spaces are not allowed";
-                        if (/^\d+$/.test(value.trim()))
-                          return "Numbers are not allowed";
-                        return true;
-                      },
-                    })}
+                    {...register("projectname", textMinLength3Rule("Project Name"))}
                     type="text"
                     placeholder="Enter Project Name"
                     className="input"
@@ -484,19 +472,7 @@ export default function Dashboard() {
                 <div>
                   <label className="label">Client Name:</label>
                   <input
-                    {...register("clientname", {
-                      required: "Client Name is Required",
-                      minLength: {
-                        value: 3,
-                        message: "Must be at least 3 characters long",
-                      },
-                      validate: (value) => {
-                        if (!value.trim()) return "Spaces are not allowed";
-                        if (/^\d+$/.test(value.trim()))
-                          return "Numbers are not allowed";
-                        return true;
-                      },
-                    })}
+                    {...register("clientname", textMinLength3Rule("Client Name"))}
                     type="text"
                     placeholder="Enter Client Name"
                     className="input"
@@ -682,19 +658,7 @@ export default function Dashboard() {
                 <div className="">
                   <label className="label">Project Name:</label>
                   <input
-                    {...updateRegister("projectname", {
-                      required: "Project Name is Required",
-                      minLength: {
-                        value: 3,
-                        message: "Must be at least 3 characters long",
-                      },
-                      validate: (value) => {
-                        if (!value.trim()) return "Spaces are not allowed";
-                        if (/^\d+$/.test(value.trim()))
-                          return "Numbers are not allowed";
-                        return true;
-                      },
-                    })}
+                    {...updateRegister("projectname", textMinLength3Rule("Project Name"))}
                     type="text"
                     placeholder="Enter Project Name"
                     className="input"
@@ -708,19 +672,7 @@ export default function Dashboard() {
                 <div>
                   <label className="label">Client Name:</label>
                   <input
-                    {...updateRegister("clientname", {
-                      required: "Client Name is Required",
-                      minLength: {
-                        value: 3,
-                        message: "Must be at least 3 characters long",
-                      },
-                      validate: (value) => {
-                        if (!value.trim()) return "Spaces are not allowed";
-                        if (/^\d+$/.test(value.trim()))
-                          return "Numbers are not allowed";
-                        return true;
-                      },
-                    })}
+                    {...updateRegister("clientname", textMinLength3Rule("Client Name"))}
                     type="text"
                     placeholder="Enter Client Name"
                     className="input"
